@@ -32,7 +32,7 @@ public class Expense {
 
     @ManyToOne
     @JoinColumn(name = "categorie_id", nullable = false)
-    private Categorie categorie;
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -45,12 +45,12 @@ public class Expense {
     public Expense() {
     }
 
-    public Expense(Integer id, BigDecimal montant, LocalDate expenseDate, String description, Categorie categorie, User user) {
+    public Expense(Integer id, BigDecimal montant, LocalDate expenseDate, String description, Category category, User user) {
         this.id = id;
         this.montant = montant;
         this.expenseDate = expenseDate;
         this.description = description;
-        this.categorie = categorie;
+        this.category = category;
         this.user = user;
     }
 
@@ -88,12 +88,12 @@ public class Expense {
         this.description = description;
     }
 
-    public Categorie getCategorie() {
-        return categorie;
+    public Category getCategorie() {
+        return category;
     }
 
-    public void setCategorie(Categorie categorie) {
-        this.categorie = categorie;
+    public void setCategorie(Category category) {
+        this.category = category;
     }
 
     public User getUser() {

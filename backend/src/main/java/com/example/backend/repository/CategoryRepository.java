@@ -1,9 +1,9 @@
 package com.example.backend.repository;
 
-import com.example.backend.model.Categorie;
+import com.example.backend.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategorieRepository extends JpaRepository<Categorie, Integer> {
+public interface CategoryRepository extends JpaRepository<Category, Integer> {
 }

@@ -6,17 +6,17 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.security.Timestamp;
 
 @Entity
-@Table(name = "categorie")
-public class Categorie {
+@Table(name = "category")
+public class Category {
     @Id
     @SequenceGenerator(
-            name = "categorie_sequence",
-            sequenceName = "categorie_sequence",
+            name = "category_sequence",
+            sequenceName = "category_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "categorie_sequence"
+            generator = "category_sequence"
     )
     private Integer id;
 
@@ -33,9 +33,9 @@ public class Categorie {
     @CreationTimestamp
     private Timestamp creationDate;
 
-    public Categorie() {}
+    public Category() {}
 
-    public Categorie(Integer id, String name, String description, User user) {
+    public Category(Integer id, String name, String description, User user) {
         this.id = id;
         this.name = name;
         this.description = description;
