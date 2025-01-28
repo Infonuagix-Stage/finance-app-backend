@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.security.Timestamp;
-
+//test
 @Entity
 @Table(name = "category")
 public class Category {
