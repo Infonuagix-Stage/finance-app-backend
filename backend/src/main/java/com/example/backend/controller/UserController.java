@@ -2,19 +2,18 @@ package com.example.backend.controller;
 
 import com.example.backend.model.User;
 import com.example.backend.service.UserService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/user")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     private final UserService userService;
 
-
-    // Injection du service via le constructeur
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -34,7 +33,7 @@ public class UserController {
     }
 
     // Créer un nouvel utilisateur
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.createUser(user);
         return ResponseEntity.ok(createdUser);
@@ -53,5 +52,5 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-
 }
+

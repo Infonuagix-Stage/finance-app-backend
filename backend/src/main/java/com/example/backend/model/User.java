@@ -3,12 +3,11 @@ package com.example.backend.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.security.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "client")
 public class User {
-
 
     @Id
     @SequenceGenerator(
@@ -28,8 +27,7 @@ public class User {
 
     @Column(name = "creation_date", updatable = false)
     @CreationTimestamp
-    private Timestamp creationDate;
-
+    private LocalDateTime creationDate;
 
     public User() {
     }
@@ -41,49 +39,44 @@ public class User {
         this.id = id;
     }
 
-    //getters
+    // Getters and Setters
     public Integer getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Timestamp getCreationDate() {
-        return creationDate;
-    }
-
-    // setters
-    public void setCreationDate(Timestamp creationDate) {
-        this.creationDate = creationDate;
     }
 
     public void setId(Integer id) {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
 
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
 
-
-
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
 }
