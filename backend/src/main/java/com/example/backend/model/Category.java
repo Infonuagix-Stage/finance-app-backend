@@ -3,7 +3,7 @@ package com.example.backend.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.security.Timestamp;
+import java.time.LocalDateTime;
 //test
 @Entity
 @Table(name = "category")
@@ -31,7 +31,7 @@ public class Category {
 
     @Column(name = "creation_date", updatable = false)
     @CreationTimestamp
-    private Timestamp creationDate;
+    private LocalDateTime creationDate;
 
     public Category() {}
 
@@ -75,11 +75,11 @@ public class Category {
         this.user = user;
     }
 
-    public Timestamp getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Timestamp creationDate) {
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 

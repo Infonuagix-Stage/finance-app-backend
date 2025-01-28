@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "expense")
@@ -40,7 +40,7 @@ public class Expense {
 
     @Column(name = "creation_date", updatable = false)
     @CreationTimestamp
-    private Timestamp creationDate;
+    private LocalDateTime creationDate;
 
     public Expense() {
     }
@@ -104,11 +104,11 @@ public class Expense {
         this.user = user;
     }
 
-    public Timestamp getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Timestamp creationDate) {
+    public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 }
