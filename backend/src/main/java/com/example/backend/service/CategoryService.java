@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.CategoryResponseDTO;
 import com.example.backend.model.Category;
 import com.example.backend.model.User;
 import com.example.backend.repository.CategoryRepository;
@@ -7,6 +8,7 @@ import com.example.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -20,36 +22,57 @@ public class CategoryService {
     }
 
     // Get all categories for a specific user
-    public List<Category> getCategoriesByUser(Integer userId) {
-        return categoryRepository.findByUserId(userId);
+    public List<CategoryResponseDTO> getCategoriesByUser(Integer userId) {
+        List<Category> categories = categoryRepository.findByUserId(userId);
+        return categories.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     // Get a category by ID for a specific user
-    public Category getCategoryByIdForUser(Integer userId, Integer categoryId) {
-        return categoryRepository.findByIdAndUserId(categoryId, userId)
+    public CategoryResponseDTO getCategoryByIdForUser(Integer userId, Integer categoryId) {
+        Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> new RuntimeException("Category not found for user with id " + userId));
+        return convertToDTO(category);
     }
 
     // Create a new category for a specific user
-    public Category createCategoryForUser(Integer userId, Category category) {
+    public CategoryResponseDTO createCategoryForUser(Integer userId, Category category) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
         category.setUser(user);
-        return categoryRepository.save(category);
+        Category savedCategory = categoryRepository.save(category);
+        return convertToDTO(savedCategory);
     }
 
     // Update a category for a specific user
-    public Category updateCategoryForUser(Integer userId, Integer categoryId, Category categoryDetails) {
-        Category category = getCategoryByIdForUser(userId, categoryId);
+    public CategoryResponseDTO updateCategoryForUser(Integer userId, Integer categoryId, Category categoryDetails) {
+        Category category = getCategoryByIdForUserEntity(userId, categoryId);
         category.setName(categoryDetails.getName());
         category.setDescription(categoryDetails.getDescription());
-        return categoryRepository.save(category);
+        Category updatedCategory = categoryRepository.save(category);
+        return convertToDTO(updatedCategory);
     }
 
     // Delete a category for a specific user
     public void deleteCategoryForUser(Integer userId, Integer categoryId) {
-        Category category = getCategoryByIdForUser(userId, categoryId);
+        Category category = getCategoryByIdForUserEntity(userId, categoryId);
         categoryRepository.delete(category);
     }
-}
 
+    // Private helper method to convert a Category entity to a DTO
+    private CategoryResponseDTO convertToDTO(Category category) {
+        return new CategoryResponseDTO(
+                category.getId(),
+                category.getName(),
+                category.getDescription(),
+                category.getCreationDate().toString()
+        );
+    }
+
+    // Private helper method to fetch a Category entity for internal use
+    private Category getCategoryByIdForUserEntity(Integer userId, Integer categoryId) {
+        return categoryRepository.findByIdAndUserId(categoryId, userId)
+                .orElseThrow(() -> new RuntimeException("Category not found for user with id " + userId));
+    }
+}
