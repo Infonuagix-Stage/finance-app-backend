@@ -1,12 +1,16 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.UserRequestDTO;
+import com.example.backend.dto.UserResponseDTO;
 import com.example.backend.model.User;
 import com.example.backend.service.UserService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -18,39 +22,43 @@ public class UserController {
         this.userService = userService;
     }
 
-    // Récupérer tous les utilisateurs
+    // Get all users
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        List<UserResponseDTO> users = userService.getAllUsers()
+                .stream()
+                .map(userService::toResponseDTO)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
 
-    // Récupérer un utilisateur par ID
+    // Get user by ID
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Integer id) {
         User user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userService.toResponseDTO(user));
     }
 
-    // Créer un nouvel utilisateur
+    // Create a new user
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User createdUser = userService.createUser(user);
-        return ResponseEntity.ok(createdUser);
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
+        User createdUser = userService.createUser(userService.toEntity(userRequestDTO));
+        return ResponseEntity.ok(userService.toResponseDTO(createdUser));
     }
 
-    // Mettre à jour un utilisateur par ID
+    // Update user
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User userDetails) {
-        User updatedUser = userService.updateUser(id, userDetails);
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<UserResponseDTO> updateUser(
+            @PathVariable Integer id,
+            @Valid @RequestBody UserRequestDTO userRequestDTO) {
+        User updatedUser = userService.updateUser(id, userService.toEntity(userRequestDTO));
+        return ResponseEntity.ok(userService.toResponseDTO(updatedUser));
     }
 
-    // Supprimer un utilisateur par ID
+    // Delete user
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 }
-
