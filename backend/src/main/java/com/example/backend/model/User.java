@@ -6,7 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.security.Timestamp;
 
 @Entity
-@Table(name = "user")
+@Table(name = "client")
 public class User {
 
 
