@@ -7,15 +7,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
-import javax.crypto.SecretKey;
+import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -27,27 +26,27 @@ public class AuthService {
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
 
-        // Charger la clé secrète depuis le fichier .env
-        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-        String secretKeyString = dotenv.get("SECRET_KEY", "0a/+epsW+AKgK9Xuc0LAgZI9LnpGcL8b+eY1C7udlQI=");
+        // Load the secret key from .env
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load(); // Load .env file
+        String secretKeyString = dotenv.get("SECRET_KEY", "defaultKey");
 
-        // Vérifier si la clé secrète est valide (>= 256 bits)
+        // Validate the key (256 bits minimum for HMAC-SHA256)
         if (Base64.getDecoder().decode(secretKeyString).length < 32) {
-            throw new IllegalArgumentException("🚨 La clé secrète doit être d'au moins 256 bits ! Modifie ton .env.");
+            throw new IllegalArgumentException("🚨 SECRET_KEY must be at least 256 bits. Update your .env file!");
         }
 
-        this.SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyString));
+        this.SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyString)); // Create the SecretKey
     }
 
     @Transactional
     public String register(User user) {
-        // Vérifier si l'email existe déjà
+        // Check if the email already exists
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("🚨 Cet email est déjà utilisé !");
+            throw new RuntimeException("🚨 Email is already in use!");
         }
 
-        // Encoder le mot de passe et enregistrer l'utilisateur
+        // Encode the password and save the user
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return generateToken(user.getEmail());
@@ -59,14 +58,14 @@ public class AuthService {
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
             return generateToken(email);
         }
-        throw new RuntimeException("❌ Email ou mot de passe incorrect.");
+        throw new RuntimeException("❌ Incorrect email or password.");
     }
 
     private String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expire en 1h
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expires in 1 hour
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }

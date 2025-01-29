@@ -1,8 +1,8 @@
 package com.example.backend.security;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,12 +18,19 @@ import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.Date;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final String SECRET_KEY_STRING = "gGJ2f5Xm9hLWv3EJz8qVz6oLsTpMnXA6LzKbRscRWYg=";
-    private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET_KEY_STRING));
+    private final SecretKey SECRET_KEY;
+
+    public JwtAuthenticationFilter() {
+        Dotenv dotenv = Dotenv.configure().load(); // Load .env file
+        String secretKeyString = dotenv.get("SECRET_KEY"); // Retrieve the secret key
+        if (secretKeyString == null || secretKeyString.isEmpty()) {
+            throw new IllegalStateException("SECRET_KEY is not defined in .env file.");
+        }
+        this.SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyString));
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -66,5 +73,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
-
 }
