@@ -1,28 +1,38 @@
 package com.example.backend.controller;
 
-
-import com.example.financeapp.security.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import com.example.backend.model.User;
+import com.example.backend.service.AuthService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
+    private final AuthService authService;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody User user) {
+        String token = authService.register(user);
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping("/login")
-    public String login(@RequestParam String username, @RequestParam String password) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-        );
-        return jwtUtil.generateToken(authentication.getName());
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+        String token = authService.login(loginRequest.get("email"), loginRequest.get("password"));
+        if (token == null) {
+            return ResponseEntity.badRequest().body("Invalid credentials");
+        }
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        return ResponseEntity.ok(response);
     }
 }
