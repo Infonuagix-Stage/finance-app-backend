@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
+import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.transaction.Transactional;
@@ -15,11 +16,15 @@ import java.util.Optional;
 public class AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final String SECRET_KEY = "superSecretKey";
+    private final String SECRET_KEY;
 
     public AuthService(UserRepository userRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
+
+        // load the secret key from the .env file
+        Dotenv dotenv = Dotenv.configure().load();
+        this.SECRET_KEY = dotenv.get("SECRET_KEY", "defaultSecretKey");
     }
 
     @Transactional
