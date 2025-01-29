@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.CategoryResponseDTO;
 import com.example.backend.model.Category;
 import com.example.backend.service.CategoryService;
 import org.springframework.http.ResponseEntity;
@@ -19,33 +20,33 @@ public class CategoryController {
 
     // Get all categories for a user
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories(@PathVariable Integer userId) {
-        List<Category> categories = categoryService.getCategoriesByUser(userId);
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(@PathVariable Integer userId) {
+        List<CategoryResponseDTO> categories = categoryService.getCategoriesByUser(userId);
         return ResponseEntity.ok(categories);
     }
 
     // Get a category by ID for a user
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Integer userId, @PathVariable Integer id) {
-        Category category = categoryService.getCategoryByIdForUser(userId, id);
+    public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable Integer userId, @PathVariable Integer id) {
+        CategoryResponseDTO category = categoryService.getCategoryByIdForUser(userId, id);
         return ResponseEntity.ok(category);
     }
 
     // Create a new category for a user
     @PostMapping
-    public ResponseEntity<Category> createCategory(@PathVariable Integer userId, @RequestBody Category category) {
-        Category createdCategory = categoryService.createCategoryForUser(userId, category);
+    public ResponseEntity<CategoryResponseDTO> createCategory(@PathVariable Integer userId, @RequestBody Category category) {
+        CategoryResponseDTO createdCategory = categoryService.createCategoryForUser(userId, category);
         return ResponseEntity.ok(createdCategory);
     }
 
     // Update a category by ID for a user
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(
+    public ResponseEntity<CategoryResponseDTO> updateCategory(
             @PathVariable Integer userId,
             @PathVariable Integer id,
             @RequestBody Category categoryDetails
     ) {
-        Category updatedCategory = categoryService.updateCategoryForUser(userId, id, categoryDetails);
+        CategoryResponseDTO updatedCategory = categoryService.updateCategoryForUser(userId, id, categoryDetails);
         return ResponseEntity.ok(updatedCategory);
     }
 
@@ -56,4 +57,3 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 }
-
