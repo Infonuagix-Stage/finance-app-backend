@@ -36,6 +36,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
+        // Autoriser les requêtes OPTIONS pour les prérequis CORS
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -63,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String email = claims.getSubject();
 
         if (email != null) {
-            User user = new User(email, "", Collections.emptyList());
+            org.springframework.security.core.userdetails.User user = new org.springframework.security.core.userdetails.User(email, "", Collections.emptyList());
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -73,4 +79,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
+
 }
