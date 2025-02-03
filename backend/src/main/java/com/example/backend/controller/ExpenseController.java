@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/users/{userId}/categories/{categoriesId}/expenses")
+@RequestMapping("/api/v1/users/{userId}/categories/{categoryId}/expenses")
 public class ExpenseController {
 
     private final ExpenseService expenseService;
@@ -19,8 +19,10 @@ public class ExpenseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses() {
-        List<ExpenseResponseDTO> expenses = expenseService.getAllExpenses();
+    public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses(
+            @PathVariable("userId") Long userId,
+            @PathVariable("categoryId") Long categoryId) {
+        List<ExpenseResponseDTO> expenses = expenseService.getAllExpenses(userId, categoryId);
         return ResponseEntity.ok(expenses);
     }
 
@@ -50,4 +52,6 @@ public class ExpenseController {
         expenseService.deleteExpense(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }

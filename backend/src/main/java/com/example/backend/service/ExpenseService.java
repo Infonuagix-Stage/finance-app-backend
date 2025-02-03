@@ -89,4 +89,11 @@ public class ExpenseService {
         responseDTO.setCreationDate(expense.getCreationDate());
         return responseDTO;
     }
+
+    public List<ExpenseResponseDTO> getAllExpenses(Long userId, Long categoryId) {
+        List<Expense> expenses = expenseRepository.findByUser_IdAndCategory_Id(userId, categoryId);
+        return expenses.stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
 }
