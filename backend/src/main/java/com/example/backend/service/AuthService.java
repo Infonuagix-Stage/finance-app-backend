@@ -6,15 +6,14 @@ import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
-
-import jakarta.transaction.Transactional;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
@@ -48,22 +47,24 @@ public class AuthService {
 
         // Encode the password and save the user
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return generateToken(user.getEmail());
+        // Sauvegarder l'utilisateur et récupérer l'utilisateur sauvegardé avec son id
+        User savedUser = userRepository.save(user);
+        return generateToken(savedUser.getEmail(), savedUser.getId());
     }
 
     @Transactional
     public String login(String email, String password) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
-            return generateToken(email);
+            return generateToken(email, user.get().getId());
         }
         throw new RuntimeException("❌ Incorrect email or password.");
     }
 
-    private String generateToken(String email) {
+    private String generateToken(String email, Integer userId) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("id", userId)  // Ajout de l'ID utilisateur dans le payload du token
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expires in 1 hour
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
