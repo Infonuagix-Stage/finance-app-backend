@@ -6,6 +6,8 @@ import com.example.backend.service.ExpenseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -27,7 +29,7 @@ public class ExpenseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ExpenseResponseDTO> getExpenseById(@PathVariable Integer id) {
+    public ResponseEntity<ExpenseResponseDTO> getExpenseById(@PathVariable Long id) {
         ExpenseResponseDTO expense = expenseService.getExpenseById(id);
         return ResponseEntity.ok(expense);
     }
@@ -40,7 +42,7 @@ public class ExpenseController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ExpenseResponseDTO> updateExpense(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @RequestBody ExpenseRequestDTO expenseRequestDTO
     ) {
         ExpenseResponseDTO updatedExpense = expenseService.updateExpense(id, expenseRequestDTO);
@@ -48,10 +50,15 @@ public class ExpenseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteExpense(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
         expenseService.deleteExpense(id);
         return ResponseEntity.noContent().build();
     }
-
-
+    @GetMapping("/total")
+    public ResponseEntity<BigDecimal> getTotalForCategory(
+            @PathVariable("userId") Long userId,
+            @PathVariable("categoryId") Long categoryId) {
+        BigDecimal total = expenseService.getTotalForCategory(userId, categoryId);
+        return ResponseEntity.ok(total);
+    }
 }

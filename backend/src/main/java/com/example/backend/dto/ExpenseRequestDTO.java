@@ -7,8 +7,8 @@ public class ExpenseRequestDTO {
     private BigDecimal montant;
     private LocalDate expenseDate;
     private String description;
-    private Integer categoryId; // ID of the associated category
-    private Integer userId;     // ID of the associated user
+    private Long categoryId; // ID of the associated category
+    private Long userId;     // ID of the associated user
 
     // Getters and Setters
     public BigDecimal getMontant() {
@@ -35,19 +35,19 @@ public class ExpenseRequestDTO {
         this.description = description;
     }
 
-    public Integer getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Integer categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 }

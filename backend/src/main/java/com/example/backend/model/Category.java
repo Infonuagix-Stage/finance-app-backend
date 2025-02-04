@@ -18,7 +18,7 @@ public class Category {
             strategy = GenerationType.SEQUENCE,
             generator = "category_sequence"
     )
-    private Integer id;
+    private Long id;
 
     private String name;
 
@@ -35,11 +35,11 @@ public class Category {
 
     public Category() {}
 
-    public Category(Integer id) {
+    public Category(Long id) {
         this.id = id;
     }
 
-    public Category(Integer id, String name, String description, User user) {
+    public Category(Long id, String name, String description, User user) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -47,11 +47,11 @@ public class Category {
     }
 
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

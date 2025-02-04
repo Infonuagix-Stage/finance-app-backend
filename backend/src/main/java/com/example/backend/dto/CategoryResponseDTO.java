@@ -1,13 +1,13 @@
 package com.example.backend.dto;
 
 public class CategoryResponseDTO {
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
     private String creationDate;
 
     // Constructor
-    public CategoryResponseDTO(Integer id, String name, String description, String creationDate) {
+    public CategoryResponseDTO(Long id, String name, String description, String creationDate) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -15,11 +15,11 @@ public class CategoryResponseDTO {
     }
 
     // Getters and setters
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

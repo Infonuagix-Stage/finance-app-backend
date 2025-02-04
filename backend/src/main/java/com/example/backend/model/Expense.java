@@ -20,7 +20,7 @@ public class Expense {
             strategy = GenerationType.SEQUENCE,
             generator = "expense_sequence"
     )
-    private Integer id;
+    private Long id;
 
     private BigDecimal montant;
 
@@ -45,7 +45,7 @@ public class Expense {
     public Expense() {
     }
 
-    public Expense(Integer id, BigDecimal montant, LocalDate expenseDate, String description, Category category, User user) {
+    public Expense(Long id, BigDecimal montant, LocalDate expenseDate, String description, Category category, User user) {
         this.id = id;
         this.montant = montant;
         this.expenseDate = expenseDate;
@@ -56,11 +56,11 @@ public class Expense {
 
 
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -88,14 +88,6 @@ public class Expense {
         this.description = description;
     }
 
-    public Category getCategorie() {
-        return category;
-    }
-
-    public void setCategorie(Category category) {
-        this.category = category;
-    }
-
     public User getUser() {
         return user;
     }
@@ -108,7 +100,11 @@ public class Expense {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

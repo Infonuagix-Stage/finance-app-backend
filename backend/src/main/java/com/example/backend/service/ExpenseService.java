@@ -10,6 +10,7 @@ import com.example.backend.repository.ExpenseRepository;
 import com.example.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,13 +27,15 @@ public class ExpenseService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<ExpenseResponseDTO> getAllExpenses() {
-        return expenseRepository.findAll().stream()
+    // Nouvelle méthode pour récupérer les dépenses d'un utilisateur dans une catégorie donnée
+    public List<ExpenseResponseDTO> getAllExpenses(Long userId, Long categoryId) {
+        return expenseRepository.findByUserIdAndCategoryId(userId, categoryId)
+                .stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    public ExpenseResponseDTO getExpenseById(Integer id) {
+    public ExpenseResponseDTO getExpenseById(Long id) {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id " + id));
         return mapToResponseDTO(expense);
@@ -50,13 +53,13 @@ public class ExpenseService {
         expense.setExpenseDate(expenseRequestDTO.getExpenseDate());
         expense.setDescription(expenseRequestDTO.getDescription());
         expense.setUser(user);
-        expense.setCategorie(category);
+        expense.setCategory(category);
 
         Expense savedExpense = expenseRepository.save(expense);
         return mapToResponseDTO(savedExpense);
     }
 
-    public ExpenseResponseDTO updateExpense(Integer id, ExpenseRequestDTO expenseRequestDTO) {
+    public ExpenseResponseDTO updateExpense(Long id, ExpenseRequestDTO expenseRequestDTO) {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id " + id));
 
@@ -66,13 +69,13 @@ public class ExpenseService {
         expense.setMontant(expenseRequestDTO.getMontant());
         expense.setExpenseDate(expenseRequestDTO.getExpenseDate());
         expense.setDescription(expenseRequestDTO.getDescription());
-        expense.setCategorie(category);
+        expense.setCategory(category);
 
         Expense updatedExpense = expenseRepository.save(expense);
         return mapToResponseDTO(updatedExpense);
     }
 
-    public void deleteExpense(Integer id) {
+    public void deleteExpense(Long id) {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id " + id));
         expenseRepository.delete(expense);
@@ -84,16 +87,20 @@ public class ExpenseService {
         responseDTO.setMontant(expense.getMontant());
         responseDTO.setExpenseDate(expense.getExpenseDate());
         responseDTO.setDescription(expense.getDescription());
-        responseDTO.setCategoryName(expense.getCategorie().getName());
+        responseDTO.setCategoryName(expense.getCategory().getName());
         responseDTO.setUserName(expense.getUser().getName());
         responseDTO.setCreationDate(expense.getCreationDate());
         return responseDTO;
     }
 
-    public List<ExpenseResponseDTO> getAllExpenses(Long userId, Long categoryId) {
-        List<Expense> expenses = expenseRepository.findByUser_IdAndCategory_Id(userId, categoryId);
-        return expenses.stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+
+    public BigDecimal getTotalForCategory(Long userId, Long categoryId) {
+        return expenseRepository.getTotalForCategory(userId, categoryId);
     }
+
+//    public BigDecimal getTotalForUser(Long userId) {
+//        return expenseRepository.getTotalForUser(userId);
+//    }
+
+
 }

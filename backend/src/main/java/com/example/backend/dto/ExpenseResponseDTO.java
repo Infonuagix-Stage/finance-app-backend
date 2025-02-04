@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ExpenseResponseDTO {
-    private Integer id;
+    private Long id;
     private BigDecimal montant;
     private LocalDate expenseDate;
     private String description;
@@ -14,11 +14,11 @@ public class ExpenseResponseDTO {
     private LocalDateTime creationDate;
 
     // Getters and Setters
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

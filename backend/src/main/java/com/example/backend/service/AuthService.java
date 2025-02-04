@@ -61,7 +61,7 @@ public class AuthService {
         throw new RuntimeException("❌ Incorrect email or password.");
     }
 
-    private String generateToken(String email, Integer userId) {
+    private String generateToken(String email, Long userId) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("id", userId)  // Ajout de l'ID utilisateur dans le payload du token

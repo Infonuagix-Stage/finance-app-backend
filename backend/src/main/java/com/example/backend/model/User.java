@@ -19,7 +19,7 @@ public class User {
             strategy = GenerationType.SEQUENCE,
             generator = "user_sequence"
     )
-    private Integer id;
+    private Long id;
 
     private String name;
     private String email;
@@ -32,7 +32,7 @@ public class User {
     public User() {
     }
 
-    public User(String name, String email, String password, Integer id) {
+    public User(String name, String email, String password, Long id) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -40,11 +40,11 @@ public class User {
     }
 
     // Getters and Setters
-    public Integer getId() {
+   public Long getId(){
         return id;
-    }
+   }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -22,7 +22,7 @@ public class CategoryService {
     }
 
     // Get all categories for a specific user
-    public List<CategoryResponseDTO> getCategoriesByUser(Integer userId) {
+    public List<CategoryResponseDTO> getCategoriesByUser(Long userId) {
         List<Category> categories = categoryRepository.findByUserId(userId);
         return categories.stream()
                 .map(this::convertToDTO)
@@ -30,14 +30,14 @@ public class CategoryService {
     }
 
     // Get a category by ID for a specific user
-    public CategoryResponseDTO getCategoryByIdForUser(Integer userId, Integer categoryId) {
+    public CategoryResponseDTO getCategoryByIdForUser(Long userId, Long categoryId) {
         Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> new RuntimeException("Category not found for user with id " + userId));
         return convertToDTO(category);
     }
 
     // Create a new category for a specific user
-    public CategoryResponseDTO createCategoryForUser(Integer userId, Category category) {
+    public CategoryResponseDTO createCategoryForUser(Long userId, Category category) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
         category.setUser(user);
@@ -46,7 +46,7 @@ public class CategoryService {
     }
 
     // Update a category for a specific user
-    public CategoryResponseDTO updateCategoryForUser(Integer userId, Integer categoryId, Category categoryDetails) {
+    public CategoryResponseDTO updateCategoryForUser(Long userId, Long categoryId, Category categoryDetails) {
         Category category = getCategoryByIdForUserEntity(userId, categoryId);
         category.setName(categoryDetails.getName());
         category.setDescription(categoryDetails.getDescription());
@@ -55,7 +55,7 @@ public class CategoryService {
     }
 
     // Delete a category for a specific user
-    public void deleteCategoryForUser(Integer userId, Integer categoryId) {
+    public void deleteCategoryForUser(Long userId, Long categoryId) {
         Category category = getCategoryByIdForUserEntity(userId, categoryId);
         categoryRepository.delete(category);
     }
@@ -71,7 +71,7 @@ public class CategoryService {
     }
 
     // Private helper method to fetch a Category entity for internal use
-    private Category getCategoryByIdForUserEntity(Integer userId, Integer categoryId) {
+    private Category getCategoryByIdForUserEntity(Long userId, Long categoryId) {
         return categoryRepository.findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> new RuntimeException("Category not found for user with id " + userId));
     }
