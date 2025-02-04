@@ -75,4 +75,27 @@ public class CategoryService {
         return categoryRepository.findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> new RuntimeException("Category not found for user with id " + userId));
     }
+
+    // Exemple de méthode de mapping d'entité vers DTO
+    private CategoryResponseDTO mapToResponseDTO(Category category) {
+        CategoryResponseDTO dto = new CategoryResponseDTO();
+        dto.setId(category.getId());
+        dto.setName(category.getName());
+        dto.setDescription(category.getDescription());
+        // Ajoutez d'autres champs si nécessaire
+        return dto;
+    }
+
+    public CategoryResponseDTO getCategoryByName(Long userId, String categoryName) {
+        Category category = (Category) categoryRepository.findByUserIdAndName(userId, categoryName)
+                .orElseThrow(() -> new RuntimeException("Category not found with name " + categoryName));
+        return mapToResponseDTO(category);
+    }
+
+    public List<CategoryResponseDTO> getAllCategories(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+        List<Category> categories = categoryRepository.findByUser(user);
+        return categories.stream().map(this::mapToResponseDTO).collect(Collectors.toList());
+    }
 }

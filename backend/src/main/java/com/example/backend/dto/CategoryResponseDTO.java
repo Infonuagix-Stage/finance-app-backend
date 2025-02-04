@@ -14,6 +14,10 @@ public class CategoryResponseDTO {
         this.creationDate = creationDate;
     }
 
+    public CategoryResponseDTO() {
+
+    }
+
     // Getters and setters
     public Long getId() {
         return id;

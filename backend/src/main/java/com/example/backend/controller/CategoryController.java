@@ -20,8 +20,8 @@ public class CategoryController {
 
     // Get all categories for a user
     @GetMapping
-    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(@PathVariable Long userId) {
-        List<CategoryResponseDTO> categories = categoryService.getCategoriesByUser(userId);
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(@PathVariable("userId") Long userId) {
+        List<CategoryResponseDTO> categories = categoryService.getAllCategories(userId);
         return ResponseEntity.ok(categories);
     }
 
@@ -55,5 +55,12 @@ public class CategoryController {
     public ResponseEntity<Void> deleteCategory(@PathVariable Long userId, @PathVariable Long id) {
         categoryService.deleteCategoryForUser(userId, id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{categoryName}")
+    public ResponseEntity<CategoryResponseDTO> getCategoryByName(
+            @PathVariable("userId") Long userId,
+            @PathVariable("categoryName") String categoryName) {
+        CategoryResponseDTO category = categoryService.getCategoryByName(userId, categoryName);
+        return ResponseEntity.ok(category);
     }
 }
