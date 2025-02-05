@@ -7,8 +7,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.crypto.SecretKey;
 import java.util.Base64;
@@ -41,25 +43,34 @@ public class AuthService {
     public String register(User user) {
         // Check if the email already exists
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
-        if (existingUser.isPresent()) {
-            throw new RuntimeException("🚨 Email is already in use!");
+        if (existingUser.isEmpty()) {
+            // Encode the password and save the user
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            // Sauvegarder l'utilisateur et récupérer l'utilisateur sauvegardé avec son id
+            User savedUser = userRepository.save(user);
+            return generateToken(savedUser.getEmail(), savedUser.getId());
         }
+        throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED, "Email déjà utilisé pour un autre compte."
+        );
 
-        // Encode the password and save the user
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // Sauvegarder l'utilisateur et récupérer l'utilisateur sauvegardé avec son id
-        User savedUser = userRepository.save(user);
-        return generateToken(savedUser.getEmail(), savedUser.getId());
     }
 
     @Transactional
     public String login(String email, String password) {
         Optional<User> user = userRepository.findByEmail(email);
+
+        // On vérifie que l'utilisateur existe et que le mot de passe correspond
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
             return generateToken(email, user.get().getId());
         }
-        throw new RuntimeException("❌ Incorrect email or password.");
+
+        // Au lieu d'un RuntimeException, on renvoie un statut HTTP 401 (UNAUTHORIZED)
+        throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED, "Email ou mot de passe incorrect."
+        );
     }
+
 
     private String generateToken(String email, Long userId) {
         return Jwts.builder()
