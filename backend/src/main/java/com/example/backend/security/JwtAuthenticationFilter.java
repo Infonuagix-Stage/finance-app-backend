@@ -24,10 +24,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final SecretKey SECRET_KEY;
 
     public JwtAuthenticationFilter() {
-        Dotenv dotenv = Dotenv.configure().load(); // Load .env file
-        String secretKeyString = dotenv.get("SECRET_KEY"); // Retrieve the secret key
+        // Charger la clé secrète depuis les variables d'environnement ou .env
+        Dotenv dotenv = Dotenv.configure()
+                .ignoreIfMissing() // Ignore si le fichier .env est absent
+                .load();
+        String secretKeyString = System.getenv("SECRET_KEY");
         if (secretKeyString == null || secretKeyString.isEmpty()) {
-            throw new IllegalStateException("SECRET_KEY is not defined in .env file.");
+            secretKeyString = dotenv.get("SECRET_KEY", "defaultKey"); // Valeur par défaut facultative
+        }
+
+        // Valider la clé (256 bits minimum pour HMAC-SHA256)
+        if (Base64.getDecoder().decode(secretKeyString).length < 32) {
+            throw new IllegalStateException("🚨 SECRET_KEY must be at least 256 bits. Update your environment variables or .env file!");
         }
         this.SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyString));
     }
