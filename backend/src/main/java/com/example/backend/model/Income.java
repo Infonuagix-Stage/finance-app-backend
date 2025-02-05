@@ -2,6 +2,7 @@ package com.example.backend.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,23 +15,23 @@ public class Income {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Montant de l'entrée d'argent
+    // Montant du revenu
     private BigDecimal amount;
 
-    // Date de l'entrée d'argent
+    // Date du revenu
     @Column(name = "income_date")
-    private LocalDate entryDate;
+    private LocalDate incomeDate;
 
-    // Description de l'entrée
+    // Description du revenu
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Catégorie associée à cette entrée (doit être de type Category, ou IncomeCategory si vous utilisez l'héritage)
+    // Catégorie associée (par exemple, la catégorie Income dans Category)
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    // Utilisateur concerné par l'entrée
+    // Utilisateur associé
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -45,68 +46,54 @@ public class Income {
     }
 
     // Constructeur avec paramètres
-    public Income(BigDecimal amount, LocalDate entryDate, String description, Category category, User user) {
+    public Income(BigDecimal amount, LocalDate incomeDate, String description, Category category, User user) {
         this.amount = amount;
-        this.entryDate = entryDate;
+        this.incomeDate = incomeDate;
         this.description = description;
         this.category = category;
         this.user = user;
     }
 
     // Getters et Setters
-
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public BigDecimal getAmount() {
         return amount;
     }
-
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
-
-    public LocalDate getEntryDate() {
-        return entryDate;
+    public LocalDate getIncomeDate() {
+        return incomeDate;
     }
-
-    public void setEntryDate(LocalDate entryDate) {
-        this.entryDate = entryDate;
+    public void setIncomeDate(LocalDate incomeDate) {
+        this.incomeDate = incomeDate;
     }
-
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
-
     public Category getCategory() {
         return category;
     }
-
     public void setCategory(Category category) {
         this.category = category;
     }
-
     public User getUser() {
         return user;
     }
-
     public void setUser(User user) {
         this.user = user;
     }
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
-
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }

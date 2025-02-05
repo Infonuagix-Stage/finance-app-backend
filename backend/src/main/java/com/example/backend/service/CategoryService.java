@@ -22,7 +22,7 @@ public class CategoryService {
         this.userRepository = userRepository;
     }
 
-    // Get all categories for a specific user
+    // Récupère toutes les catégories pour un utilisateur par son ID
     public List<CategoryResponseDTO> getCategoriesByUser(Long userId) {
         List<Category> categories = categoryRepository.findByUserId(userId);
         return categories.stream()
@@ -30,84 +30,112 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    // Get a category by ID for a specific user
+    // Récupère une catégorie par son ID pour un utilisateur
     public CategoryResponseDTO getCategoryByIdForUser(Long userId, Long categoryId) {
         Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> new RuntimeException("Category not found for user with id " + userId));
         return convertToDTO(category);
     }
 
-    // Create a new category for a specific user
+    // Méthode générique pour créer une catégorie pour un utilisateur
     public CategoryResponseDTO createCategoryForUser(Long userId, Category category) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
-
-        // Si le type n'est pas renseigné, on affecte une valeur par défaut
+        User user = findUserById(userId);
+        // Si le type n'est pas renseigné, on affecte EXPENSE par défaut
         if (category.getType() == null) {
-            category.setType(CategoryType.EXPENSE); // Par exemple, EXPENSE par défaut
+            category.setType(CategoryType.EXPENSE);
         }
-
         category.setUser(user);
         Category savedCategory = categoryRepository.save(category);
         return convertToDTO(savedCategory);
     }
 
+    // Crée une catégorie de dépense pour un utilisateur
+    public CategoryResponseDTO createExpenseCategory(Long userId, Category category) {
+        return null;
+    }
 
-    // Update a category for a specific user
+    // Crée une catégorie de revenu (income) pour un utilisateur
+    public CategoryResponseDTO createIncomeCategory(Long userId, Category category) {
+        User user = findUserById(userId);
+        category.setUser(user);
+        category.setType(CategoryType.INCOME);
+        Category savedCategory = saveCategory(category);
+        return convertToDTO(savedCategory);
+    }
+
+    // Méthode pour mettre à jour une catégorie pour un utilisateur
     public CategoryResponseDTO updateCategoryForUser(Long userId, Long categoryId, Category categoryDetails) {
         Category category = getCategoryByIdForUserEntity(userId, categoryId);
         category.setName(categoryDetails.getName());
         category.setDescription(categoryDetails.getDescription());
+        // Vous pouvez mettre à jour le type si nécessaire
+        if (categoryDetails.getType() != null) {
+            category.setType(categoryDetails.getType());
+        }
         Category updatedCategory = categoryRepository.save(category);
         return convertToDTO(updatedCategory);
     }
 
-    // Delete a category for a specific user
+    // Supprime une catégorie pour un utilisateur
     public void deleteCategoryForUser(Long userId, Long categoryId) {
         Category category = getCategoryByIdForUserEntity(userId, categoryId);
         categoryRepository.delete(category);
     }
 
-    // Private helper method to convert a Category entity to a DTO
-    private CategoryResponseDTO convertToDTO(Category category) {
+    // Récupère une catégorie par son nom pour un utilisateur
+    public CategoryResponseDTO getCategoryByName(Long userId, String categoryName) {
+        Category category = (Category) categoryRepository.findByUserIdAndName(userId, categoryName)
+                .orElseThrow(() -> new RuntimeException("Category not found with name " + categoryName));
+        return convertToDTO(category);
+    }
+
+    // Récupère toutes les catégories d'un utilisateur en passant par l'entité User
+    public List<CategoryResponseDTO> getAllCategories(Long userId) {
+        User user = findUserById(userId);
+        List<Category> categories = categoryRepository.findByUser(user);
+        return categories.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    // Méthode utilitaire pour récupérer un utilisateur par son ID
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+    }
+
+    // Méthode demandée pour sauvegarder une catégorie
+    public Category saveCategory(Category category) {
+        return categoryRepository.save(category);
+    }
+
+    // Méthode privée de conversion de l'entité Category en CategoryResponseDTO
+    public CategoryResponseDTO convertToDTO(Category category) {
         return new CategoryResponseDTO(
                 category.getName(),
                 category.getId(),
                 category.getDescription(),
                 category.getCreationDate().toString(),
-                category.getType().name(),   // Convertit l'enum en chaîne
-                category.getUser() != null ? category.getUser().getId() : null  // Récupère l'ID de l'utilisateur
+                category.getType().name(),  // Conversion de l'enum en chaîne
+                category.getUser() != null ? category.getUser().getId() : null
         );
     }
 
-
-
-    // Private helper method to fetch a Category entity for internal use
+    // Méthode privée utilitaire pour récupérer une entité Category pour usage interne
     private Category getCategoryByIdForUserEntity(Long userId, Long categoryId) {
         return categoryRepository.findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> new RuntimeException("Category not found for user with id " + userId));
     }
 
-    // Exemple de méthode de mapping d'entité vers DTO
-    private CategoryResponseDTO mapToResponseDTO(Category category) {
-        CategoryResponseDTO dto = new CategoryResponseDTO();
-        dto.setId(category.getId());
-        dto.setName(category.getName());
-        dto.setDescription(category.getDescription());
-        // Ajoutez d'autres champs si nécessaire
-        return dto;
+    public List<CategoryResponseDTO> getIncomeCategories(Long userId) {
+        List<Category> categories = categoryRepository.findByUserIdAndType(userId, CategoryType.INCOME);
+        return categories.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    public CategoryResponseDTO getCategoryByName(Long userId, String categoryName) {
-        Category category = (Category) categoryRepository.findByUserIdAndName(userId, categoryName)
-                .orElseThrow(() -> new RuntimeException("Category not found with name " + categoryName));
-        return mapToResponseDTO(category);
-    }
-
-    public List<CategoryResponseDTO> getAllCategories(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
-        List<Category> categories = categoryRepository.findByUser(user);
-        return categories.stream().map(this::mapToResponseDTO).collect(Collectors.toList());
+    public List<CategoryResponseDTO> getExpenseCategories(Long userId) {
+        List<Category> categories = categoryRepository.findByUserIdAndType(userId, CategoryType.EXPENSE);
+        return categories.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 }
