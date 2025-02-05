@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.dto.CategoryResponseDTO;
 import com.example.backend.model.Category;
+import com.example.backend.model.CategoryType;
 import com.example.backend.model.User;
 import com.example.backend.repository.CategoryRepository;
 import com.example.backend.repository.UserRepository;
@@ -40,10 +41,17 @@ public class CategoryService {
     public CategoryResponseDTO createCategoryForUser(Long userId, Category category) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+
+        // Si le type n'est pas renseigné, on affecte une valeur par défaut
+        if (category.getType() == null) {
+            category.setType(CategoryType.EXPENSE); // Par exemple, EXPENSE par défaut
+        }
+
         category.setUser(user);
         Category savedCategory = categoryRepository.save(category);
         return convertToDTO(savedCategory);
     }
+
 
     // Update a category for a specific user
     public CategoryResponseDTO updateCategoryForUser(Long userId, Long categoryId, Category categoryDetails) {
@@ -63,12 +71,16 @@ public class CategoryService {
     // Private helper method to convert a Category entity to a DTO
     private CategoryResponseDTO convertToDTO(Category category) {
         return new CategoryResponseDTO(
-                category.getId(),
                 category.getName(),
+                category.getId(),
                 category.getDescription(),
-                category.getCreationDate().toString()
+                category.getCreationDate().toString(),
+                category.getType().name(),   // Convertit l'enum en chaîne
+                category.getUser() != null ? category.getUser().getId() : null  // Récupère l'ID de l'utilisateur
         );
     }
+
+
 
     // Private helper method to fetch a Category entity for internal use
     private Category getCategoryByIdForUserEntity(Long userId, Long categoryId) {

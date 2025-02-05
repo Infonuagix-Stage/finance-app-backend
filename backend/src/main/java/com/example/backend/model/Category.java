@@ -4,26 +4,23 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-//test
+
 @Entity
 @Table(name = "category")
 public class Category {
+
     @Id
-    @SequenceGenerator(
-            name = "category_sequence",
-            sequenceName = "category_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "category_sequence"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CategoryType type; // Enum : EXPENSE, INCOME
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -33,19 +30,17 @@ public class Category {
     @CreationTimestamp
     private LocalDateTime creationDate;
 
-    public Category() {}
+    // Constructeurs
+    public Category() { }
 
-    public Category(Long id) {
-        this.id = id;
-    }
-
-    public Category(Long id, String name, String description, User user) {
-        this.id = id;
+    public Category(String name, String description, CategoryType type, User user) {
         this.name = name;
         this.description = description;
+        this.type = type;
         this.user = user;
     }
 
+    // Getters et setters
 
     public Long getId() {
         return id;
@@ -71,6 +66,14 @@ public class Category {
         this.description = description;
     }
 
+    public CategoryType getType() {
+        return type;
+    }
+
+    public void setType(CategoryType type) {
+        this.type = type;
+    }
+
     public User getUser() {
         return user;
     }
@@ -86,6 +89,4 @@ public class Category {
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
-
-
 }

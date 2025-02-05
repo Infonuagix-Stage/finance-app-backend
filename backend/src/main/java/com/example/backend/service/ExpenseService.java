@@ -49,7 +49,7 @@ public class ExpenseService {
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + expenseRequestDTO.getCategoryId()));
 
         Expense expense = new Expense();
-        expense.setMontant(expenseRequestDTO.getMontant());
+        expense.setAmount(expenseRequestDTO.getMontant());
         expense.setExpenseDate(expenseRequestDTO.getExpenseDate());
         expense.setDescription(expenseRequestDTO.getDescription());
         expense.setUser(user);
@@ -66,7 +66,7 @@ public class ExpenseService {
         Category category = categoryRepository.findById(expenseRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + expenseRequestDTO.getCategoryId()));
 
-        expense.setMontant(expenseRequestDTO.getMontant());
+        expense.setAmount(expenseRequestDTO.getMontant());
         expense.setExpenseDate(expenseRequestDTO.getExpenseDate());
         expense.setDescription(expenseRequestDTO.getDescription());
         expense.setCategory(category);
@@ -84,7 +84,7 @@ public class ExpenseService {
     private ExpenseResponseDTO mapToResponseDTO(Expense expense) {
         ExpenseResponseDTO responseDTO = new ExpenseResponseDTO();
         responseDTO.setId(expense.getId());
-        responseDTO.setMontant(expense.getMontant());
+        responseDTO.setMontant(expense.getAmount());
         responseDTO.setExpenseDate(expense.getExpenseDate());
         responseDTO.setDescription(expense.getDescription());
         responseDTO.setCategoryName(expense.getCategory().getName());

@@ -7,30 +7,30 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "expense")
-public class Expense {
+@Table(name = "income")
+public class Income {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Montant de la dépense
+    // Montant de l'entrée d'argent
     private BigDecimal amount;
 
-    // Date de la dépense
-    @Column(name = "expense_date")
-    private LocalDate expenseDate;
+    // Date de l'entrée d'argent
+    @Column(name = "income_date")
+    private LocalDate entryDate;
 
-    // Description de la dépense
+    // Description de l'entrée
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Catégorie associée à cette dépense (doit être de type Category, ou ExpenseCategory si vous utilisez l'héritage)
+    // Catégorie associée à cette entrée (doit être de type Category, ou IncomeCategory si vous utilisez l'héritage)
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    // Utilisateur qui a réalisé la dépense
+    // Utilisateur concerné par l'entrée
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -41,13 +41,13 @@ public class Expense {
     private LocalDateTime creationDate;
 
     // Constructeur par défaut
-    public Expense() {
+    public Income() {
     }
 
     // Constructeur avec paramètres
-    public Expense(BigDecimal amount, LocalDate expenseDate, String description, Category category, User user) {
+    public Income(BigDecimal amount, LocalDate entryDate, String description, Category category, User user) {
         this.amount = amount;
-        this.expenseDate = expenseDate;
+        this.entryDate = entryDate;
         this.description = description;
         this.category = category;
         this.user = user;
@@ -71,12 +71,12 @@ public class Expense {
         this.amount = amount;
     }
 
-    public LocalDate getExpenseDate() {
-        return expenseDate;
+    public LocalDate getEntryDate() {
+        return entryDate;
     }
 
-    public void setExpenseDate(LocalDate expenseDate) {
-        this.expenseDate = expenseDate;
+    public void setEntryDate(LocalDate entryDate) {
+        this.entryDate = entryDate;
     }
 
     public String getDescription() {

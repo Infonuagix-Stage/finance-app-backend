@@ -16,14 +16,11 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
 
 
-    @Query("SELECT COALESCE(SUM(e.montant), 0) FROM Expense e WHERE e.user.id = :userId AND e.category.id = :categoryId")
+    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.id = :userId AND e.category.id = :categoryId")
     BigDecimal getTotalForCategory(@Param("userId") Long userId, @Param("categoryId") Long categoryId);
 
     List<Expense> findByUserIdAndCategoryId(Long userId, Long categoryId);
 
-
-//    @Query("SELECT COALESCE(SUM(e.montant), 0) FROM Expense e WHERE e.user.id = :userId AND e.category = :categoryId")
-//    BigDecimal getTotalForUser(@Param("userId") Long userId);
 
 }
 
