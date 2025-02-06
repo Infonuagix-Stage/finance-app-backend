@@ -54,11 +54,11 @@ public class ExpenseController {
         expenseService.deleteExpense(id);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/total")
-    public ResponseEntity<BigDecimal> getTotalForCategory(
-            @PathVariable("userId") Long userId,
-            @PathVariable("categoryId") Long categoryId) {
-        BigDecimal total = expenseService.getTotalForCategory(userId, categoryId);
-        return ResponseEntity.ok(total);
-    }
+//    @GetMapping("/total")
+//    public ResponseEntity<BigDecimal> getTotalForCategory(
+//            @PathVariable("userId") Long userId,
+//            @PathVariable("categoryId") Long categoryId) {
+//        BigDecimal total = expenseService.getTotalForCategory(userId, categoryId);
+//        return ResponseEntity.ok(total);
+//    }
 }

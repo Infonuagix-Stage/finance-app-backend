@@ -59,12 +59,12 @@ public class IncomeController {
         return ResponseEntity.noContent().build();
     }
 
-    // GET : Obtenir le total des incomes pour une catégorie d'un utilisateur
-    @GetMapping("/total")
-    public ResponseEntity<BigDecimal> getTotalForCategory(
-            @PathVariable("userId") Long userId,
-            @PathVariable("categoryId") Long categoryId) {
-        BigDecimal total = incomeService.getTotalForCategory(userId, categoryId);
-        return ResponseEntity.ok(total);
-    }
+//    // GET : Obtenir le total des incomes pour une catégorie d'un utilisateur
+//    @GetMapping("/total")
+//    public ResponseEntity<BigDecimal> getTotalForCategory(
+//            @PathVariable("userId") Long userId,
+//            @PathVariable("categoryId") Long categoryId) {
+//        BigDecimal total = incomeService.getTotalForCategory(userId, categoryId);
+//        return ResponseEntity.ok(total);
+//    }
 }
