@@ -37,9 +37,10 @@ public class IncomeController {
 
     // POST : Créer une nouvelle income
     @PostMapping
-    public ResponseEntity<IncomeResponseDTO> createIncome(@RequestBody IncomeRequestDTO incomeRequestDTO) {
+    public ResponseEntity<IncomeResponseDTO> createIncome(
+                                                          @RequestBody IncomeRequestDTO incomeRequestDTO) {
         IncomeResponseDTO createdIncome = incomeService.createIncome(incomeRequestDTO);
-        return ResponseEntity.status(201).body(createdIncome);
+        return ResponseEntity.ok(createdIncome);
     }
 
     // PUT : Mettre à jour une income existante

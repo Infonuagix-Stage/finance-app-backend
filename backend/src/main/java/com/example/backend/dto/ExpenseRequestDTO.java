@@ -4,19 +4,19 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class ExpenseRequestDTO {
-    private BigDecimal montant;
+    private BigDecimal amount;
     private LocalDate expenseDate;
     private String description;
     private Long categoryId; // ID of the associated category
     private Long userId;     // ID of the associated user
 
     // Getters and Setters
-    public BigDecimal getMontant() {
-        return montant;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setMontant(BigDecimal montant) {
-        this.montant = montant;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public LocalDate getExpenseDate() {
