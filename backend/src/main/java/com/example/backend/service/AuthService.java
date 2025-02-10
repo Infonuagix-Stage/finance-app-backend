@@ -27,16 +27,20 @@ public class AuthService {
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
 
-        // Load the secret key from .env
-        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load(); // Load .env file
-        String secretKeyString = dotenv.get("SECRET_KEY", "defaultKey");
-
-        // Validate the key (256 bits minimum for HMAC-SHA256)
-        if (Base64.getDecoder().decode(secretKeyString).length < 32) {
-            throw new IllegalArgumentException("🚨 SECRET_KEY must be at least 256 bits. Update your .env file!");
+        // Charger la clé secrète depuis les variables d'environnement ou .env
+        Dotenv dotenv = Dotenv.configure()
+                .ignoreIfMissing() // Ignore si le fichier .env est absent
+                .load();
+        String secretKeyString = System.getenv("SECRET_KEY");
+        if (secretKeyString == null || secretKeyString.isEmpty()) {
+            secretKeyString = dotenv.get("SECRET_KEY", "defaultKey"); // Valeur par défaut facultative
         }
 
-        this.SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyString)); // Create the SecretKey
+        // Valider la clé (256 bits minimum pour HMAC-SHA256)
+        if (Base64.getDecoder().decode(secretKeyString).length < 32) {
+            throw new IllegalArgumentException("🚨 SECRET_KEY must be at least 256 bits. Update your environment variables or .env file!");
+        }
+        this.SECRET_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyString));
     }
 
     @Transactional
