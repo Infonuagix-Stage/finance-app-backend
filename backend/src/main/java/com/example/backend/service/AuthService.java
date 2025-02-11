@@ -52,7 +52,7 @@ public class AuthService {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             // Sauvegarder l'utilisateur et récupérer l'utilisateur sauvegardé avec son id
             User savedUser = userRepository.save(user);
-            return generateToken(savedUser.getEmail(), savedUser.getId());
+            return generateToken(savedUser.getEmail(), savedUser.getId(), savedUser.getName());
         }
         throw new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED, "Email déjà utilisé pour un autre compte."
@@ -66,7 +66,7 @@ public class AuthService {
 
         // On vérifie que l'utilisateur existe et que le mot de passe correspond
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
-            return generateToken(email, user.get().getId());
+            return generateToken(email, user.get().getId(), user.get().getName());
         }
 
         // Au lieu d'un RuntimeException, on renvoie un statut HTTP 401 (UNAUTHORIZED)
@@ -76,10 +76,11 @@ public class AuthService {
     }
 
 
-    private String generateToken(String email, Long userId) {
+    private String generateToken(String email, Long userId, String name) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("id", userId)  // Ajout de l'ID utilisateur dans le payload du token
+                .claim("name", name)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expires in 1 hour
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
