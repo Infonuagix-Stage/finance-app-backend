@@ -5,14 +5,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "projects")
+@Table(name = "project")
 public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    // Use @Column since we're not mapping a relationship, just a basic attribute.
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Column(nullable = false)
@@ -63,3 +64,4 @@ public class Project {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 }
+

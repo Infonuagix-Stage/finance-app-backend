@@ -1,7 +1,11 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.ProjectRequestDTO;
+import com.example.backend.dto.ProjectResponseDTO;
 import com.example.backend.model.Project;
+import com.example.backend.repository.UserRepository;
 import com.example.backend.service.ProjectService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.backend.model.User;
@@ -29,10 +33,70 @@ public class ProjectController {
         Optional<Project> project = projectService.getProjectById(id);
         return project.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-
     @PostMapping
-    public ResponseEntity<Project> createProject(@RequestBody Project project) {
-        return ResponseEntity.ok(projectService.createProject(project));
+    public ResponseEntity<ProjectResponseDTO> createProject(
+            @PathVariable Long userId,
+            @RequestBody ProjectRequestDTO projectRequestDTO) {
+
+        // Create a new Project entity from the incoming DTO
+        Project project = new Project();
+        project.setName(projectRequestDTO.getName());
+        project.setTargetAmount(projectRequestDTO.getTargetAmount());
+        project.setSavedAmount(projectRequestDTO.getSavedAmount());
+        project.setDeadline(projectRequestDTO.getDeadline());
+        project.setPriority(projectRequestDTO.getPriority());
+        project.setMonthlyContribution(projectRequestDTO.getMonthlyContribution());
+
+        project.setUserId(userId);
+        Project savedProject = projectService.save(project);
+
+        ProjectResponseDTO responseDTO = convertToResponseDTO(savedProject);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    // Example conversion method
+    private ProjectResponseDTO convertToResponseDTO(Project project) {
+        ProjectResponseDTO dto = new ProjectResponseDTO();
+        dto.setId(project.getId());
+        dto.setName(project.getName());
+        dto.setTargetAmount(project.getTargetAmount());
+        dto.setSavedAmount(project.getSavedAmount());
+        dto.setDeadline(project.getDeadline());
+        dto.setPriority(project.getPriority());
+        dto.setMonthlyContribution(project.getMonthlyContribution());
+        dto.setUserId(project.getUserId());
+        dto.setCreatedAt(project.getCreatedAt());
+        return dto;
+    }
+    @PutMapping("/{projectId}")
+    public ResponseEntity<ProjectResponseDTO> updateProject(
+            @PathVariable Long userId,
+            @PathVariable Long projectId,
+            @RequestBody ProjectRequestDTO projectRequestDTO) {
+
+        // Vérifier que le projet existe et appartient à l'utilisateur
+        Optional<Project> projectOptional = projectService.findByIdAndUserId(projectId, userId);
+        if (projectOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Project project = projectOptional.get();
+        // Mettre à jour les champs avec les valeurs du DTO
+        project.setName(projectRequestDTO.getName());
+        project.setTargetAmount(projectRequestDTO.getTargetAmount());
+        project.setSavedAmount(projectRequestDTO.getSavedAmount());
+        project.setDeadline(projectRequestDTO.getDeadline());
+        project.setPriority(projectRequestDTO.getPriority());
+        project.setMonthlyContribution(projectRequestDTO.getMonthlyContribution());
+
+        // Sauvegarder la modification
+        Project updatedProject = projectService.save(project);
+
+        // Convertir l'entité mise à jour en DTO de réponse
+        ProjectResponseDTO responseDTO = projectService.convertToResponseDTO(updatedProject);
+
+        return ResponseEntity.ok(responseDTO);
     }
 
     @DeleteMapping("/{id}")
