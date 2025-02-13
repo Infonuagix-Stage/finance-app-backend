@@ -45,43 +45,42 @@ public class AuthService {
 
     @Transactional
     public String register(User user) {
-        // Check if the email already exists
+        // Vérifier si l'email existe déjà
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isEmpty()) {
-            // Encode the password and save the user
+            // Encoder le mot de passe et sauvegarder l'utilisateur
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            // Sauvegarder l'utilisateur et récupérer l'utilisateur sauvegardé avec son id
             User savedUser = userRepository.save(user);
-            return generateToken(savedUser.getEmail(), savedUser.getId());
+            return generateToken(savedUser); // Passer l'objet User entier
         }
         throw new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED, "Email déjà utilisé pour un autre compte."
         );
-
     }
 
     @Transactional
     public String login(String email, String password) {
         Optional<User> user = userRepository.findByEmail(email);
 
-        // On vérifie que l'utilisateur existe et que le mot de passe correspond
+        // Vérifier que l'utilisateur existe et que le mot de passe correspond
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
-            return generateToken(email, user.get().getId());
+            return generateToken(user.get()); // Passer l'objet User entier
         }
 
-        // Au lieu d'un RuntimeException, on renvoie un statut HTTP 401 (UNAUTHORIZED)
+        // Renvoyer un statut HTTP 401 (UNAUTHORIZED)
         throw new ResponseStatusException(
                 HttpStatus.UNAUTHORIZED, "Email ou mot de passe incorrect."
         );
     }
 
 
-    private String generateToken(String email, Long userId) {
+    private String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(email)
-                .claim("id", userId)  // Ajout de l'ID utilisateur dans le payload du token
+                .setSubject(user.getEmail())  // Utiliser l'email comme sujet du token
+                .claim("id", user.getId())     // Ajouter l'ID utilisateur dans le payload
+                .claim("name", user.getName()) // Ajouter le nom dans le payload
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expires in 1 hour
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expiration dans 1 heure
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
