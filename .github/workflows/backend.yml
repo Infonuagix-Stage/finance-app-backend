@@ -29,6 +29,7 @@ jobs:
 
       - name: Run tests
         run: mvn test
+        working-directory: backend
 
       - name: Docker Build and Push
         run: |
