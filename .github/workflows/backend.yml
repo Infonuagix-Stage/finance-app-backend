@@ -41,3 +41,4 @@ jobs:
           docker build -t ghcr.io/${{ env.REPO_NAME }}/backend:latest .
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker push ghcr.io/${{ github.repository }}/backend:latest
+        working-directory: backend
