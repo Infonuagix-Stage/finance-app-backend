@@ -28,7 +28,7 @@ jobs:
         working-directory: backend
 
       - name: Run tests
-        run: mvn test
+        run: mvn test -x
 
       - name: Docker Build and Push
         run: |
