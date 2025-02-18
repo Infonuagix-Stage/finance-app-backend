@@ -1,7 +1,10 @@
+# railway.yaml (à la racine, c.-à-d. dans finance-app-backend/)
 services:
   - name: spring-boot-backend
     path: ./backend
     build:
       command: mvn clean package -DskipTests
     start:
-      command: java -jar target/backend-0.0.1-SNAPSHOT.jar
+      command: java -jar target/mon-appli.jar
+    env:
+      PORT: 8080
