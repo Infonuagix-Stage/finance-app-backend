@@ -1,6 +1,7 @@
-# railway.yaml
+# railway.yaml à la racine
 services:
   - name: spring-boot-backend
     dockerfilePath: ./backend/Dockerfile
+    # Si vous avez besoin de variables d'environnement dans le conteneur :
     env:
       PORT: 8080
