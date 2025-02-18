@@ -64,6 +64,9 @@ A backend API for managing personal finance data, including authentication, tran
    spring.datasource.password=yourpassword
    spring.jpa.hibernate.ddl-auto=update
    ```
+3. Create a .env file at the root:
+SECRET_KEY= (generate a 64 bits key)
+FRONTEND_URL=http://localhost:3000
 
 ## ▶️ Running the Application  
 
