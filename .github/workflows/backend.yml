@@ -45,10 +45,10 @@ jobs:
 
       - name: Docker Build and Push
         run: |
-          docker build -t ghcr.io/${{ env.REPO_NAME }}/backend:latest .
+          docker build -t ghcr.io/${{ env.REPO_NAME }}:latest .
           echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker push ghcr.io/${{ env.REPO_NAME }}/backend:latest
-        working-directory: backend
+          docker push ghcr.io/${{ env.REPO_NAME }}:latest
+
     
   deploy:
     needs: build
