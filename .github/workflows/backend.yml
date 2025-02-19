@@ -68,4 +68,4 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           # Commande de déploiement, à adapter selon la documentation Railway
-          railway up --detach
+          railway up --service backend --detach
