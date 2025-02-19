@@ -19,7 +19,7 @@ backend/*.ear
 backend/*.class
 
 # Ignorer les fichiers de configuration sensible
-backend/src/main/resources/application.properties
+backend/src/main/resources/.env
 backend/src/main/resources/application.yml
 backend/src/main/resources/*.secrets
 
