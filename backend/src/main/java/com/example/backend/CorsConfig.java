@@ -11,7 +11,7 @@ public class CorsConfig {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-        String frontEndUrl = dotenv.get("FRONTEND_URL");
+        String frontEndUrl = dotenv.get("FRONTEND_URL", "http://localhost:3000");
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
