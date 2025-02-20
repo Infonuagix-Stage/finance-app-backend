@@ -10,11 +10,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      SECRET_KEY: ${{ secrets.SECRET_KEY }} 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up .env file
+        run: echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env 
 
       - name: Set up JDK 21
         uses: actions/setup-java@v3
