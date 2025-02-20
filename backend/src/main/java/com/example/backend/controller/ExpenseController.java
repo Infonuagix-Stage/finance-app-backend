@@ -45,6 +45,8 @@ public class ExpenseController {
             @PathVariable Long id,
             @RequestBody ExpenseRequestDTO expenseRequestDTO
     ) {
+        System.out.println(expenseRequestDTO.getAmount());
+        System.out.println("ID reçu : " + id);
         ExpenseResponseDTO updatedExpense = expenseService.updateExpense(id, expenseRequestDTO);
         return ResponseEntity.ok(updatedExpense);
     }
