@@ -1,6 +1,7 @@
 package com.example.backend.config;
 
 import com.example.backend.security.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,16 +18,15 @@ import java.util.Arrays;
 @Configuration
 public class SecurityConfig {
 
+    @Value("${FRONTEND_URL}")
+    private String frontendUrl;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Autoriser l'origine de votre front-end
-        configuration.setAllowedOrigins(Arrays.asList("https://finance-app-frontend-8bmb.onrender.com"));
-        // Autoriser les méthodes HTTP que vous utilisez
+        configuration.setAllowedOrigins(Arrays.asList(frontendUrl));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        // Autoriser tous les en-têtes ou spécifiez ceux dont vous avez besoin
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        // Si besoin d'autoriser les credentials
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

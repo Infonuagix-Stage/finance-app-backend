@@ -11,7 +11,7 @@ public class CorsConfig {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-        String frontEndUrl = dotenv.get("FRONTEND_URL", "https://finance-app-frontend-8bmb.onrender.com");
+        String frontEndUrl = dotenv.get("FRONTEND_URL");
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
