@@ -10,12 +10,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    # Définition des variables d'environnement à partir des secrets
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up .env file
-        run: echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env 
 
       - name: Set up JDK 21
         uses: actions/setup-java@v3
@@ -38,7 +42,7 @@ jobs:
         run: mvn clean install
         working-directory: backend
 
-      # Si les tests sont déjà inclus dans le build, cette étape est à supprimer.
+      # Si vos tests ne sont pas déjà inclus dans "mvn clean install", laissez cette étape :
       - name: Run tests
         run: mvn test
         working-directory: backend
@@ -52,7 +56,6 @@ jobs:
           echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker push ghcr.io/${{ env.REPO_NAME }}:latest
 
-    
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -70,5 +73,5 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
-          # Commande de déploiement, à adapter selon la documentation Railway
+          # Commande de déploiement Railway (adaptée à votre config)
           railway up --service backend --detach
