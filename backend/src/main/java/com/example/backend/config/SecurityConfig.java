@@ -21,7 +21,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Autoriser l'origine de votre front-end
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("https://finance-app-frontend-8bmb.onrender.com"));
         // Autoriser les méthodes HTTP que vous utilisez
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // Autoriser tous les en-têtes ou spécifiez ceux dont vous avez besoin
