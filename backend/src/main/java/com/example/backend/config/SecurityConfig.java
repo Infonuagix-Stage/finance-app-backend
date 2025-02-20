@@ -18,7 +18,7 @@ import java.util.Arrays;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${FRONTEND_URL}")
+    @Value("${FRONTEND_URL:https://finance-app-frontend-8bmb.onrender.com}")
     private String frontendUrl;
 
     @Bean
