@@ -1,6 +1,7 @@
 package com.example.backend.config;
 
 import com.example.backend.security.JwtAuthenticationFilter;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +19,15 @@ import java.util.Arrays;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${FRONTEND_URL:https://finance-app-frontend-8bmb.onrender.com}")
+    @Value("${FRONTEND_URL:#{null}}") // Si FRONTEND_URL n'est pas défini dans les properties, utilisez la valeur du .env
     private String frontendUrl;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        if (frontendUrl == null) {
+            Dotenv dotenv = Dotenv.configure().load();
+            frontendUrl = dotenv.get("FRONTEND_URL");
+        }
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(frontendUrl));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
