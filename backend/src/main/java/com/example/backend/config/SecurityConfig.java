@@ -48,7 +48,15 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/*/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/*/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/*/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/*/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/categories/*/expenses/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/*/categories/*/expenses/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/categories/*/incomes/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/*/categories/*/incomes/**").permitAll()
 
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
