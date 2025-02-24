@@ -29,7 +29,7 @@ public class SecurityConfig {
             frontendUrl = dotenv.get("FRONTEND_URL");
         }
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(frontendUrl));
+        configuration.setAllowedOrigins(Arrays.asList("https://finance-app-frontend-8mb0.onrender.com"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
