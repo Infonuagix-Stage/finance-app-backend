@@ -19,7 +19,7 @@ import java.util.Arrays;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${FRONTEND_URL:#{null}}") // Si FRONTEND_URL n'est pas défini dans les properties, utilisez la valeur du .env
+    @Value("${FRONTEND_URL:https://finance-app-frontend-8mb0.onrender.com}")
     private String frontendUrl;
 
     @Bean
