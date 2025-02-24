@@ -1,8 +1,6 @@
 package com.example.backend.config;
 
 import com.example.backend.security.JwtAuthenticationFilter;
-import io.github.cdimascio.dotenv.Dotenv;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,19 +17,16 @@ import java.util.Arrays;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${FRONTEND_URL:#{null}}") // Si FRONTEND_URL n'est pas défini dans les properties, utilisez la valeur du .env
-    private String frontendUrl;
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        if (frontendUrl == null) {
-            Dotenv dotenv = Dotenv.configure().load();
-            frontendUrl = dotenv.get("FRONTEND_URL");
-        }
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(frontendUrl));
+        // Autoriser l'origine de votre front-end
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        // Autoriser les méthodes HTTP que vous utilisez
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Autoriser tous les en-têtes ou spécifiez ceux dont vous avez besoin
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        // Si besoin d'autoriser les credentials
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -48,7 +43,15 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/*/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/*/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/*/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/*/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/projects/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/categories/*/expenses/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/*/categories/*/expenses/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/categories/*/incomes/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/*/categories/*/incomes/**").permitAll()
 
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
