@@ -60,8 +60,11 @@ public class ExpenseService {
     }
 
     public ExpenseResponseDTO updateExpense(Long id, ExpenseRequestDTO expenseRequestDTO) {
+        System.out.println("ID reçu dans le service : " + id);
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id " + id));
+
+        System.out.println(expenseRequestDTO.getCategoryId());
 
         Category category = categoryRepository.findById(expenseRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + expenseRequestDTO.getCategoryId()));

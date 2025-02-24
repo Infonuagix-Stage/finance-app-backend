@@ -17,10 +17,12 @@ backend/*.jar
 backend/*.war
 backend/*.ear
 backend/*.class
+backend/.env
 
 # Ignorer les fichiers de configuration sensible
 backend/src/main/resources/.env
 backend/src/main/resources/application.yml
+backend/src/main/resources/application.properties
 backend/src/main/resources/*.secrets
 
 # IntelliJ IDEA / Eclipse / VSCode
