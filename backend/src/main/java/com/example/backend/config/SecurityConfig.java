@@ -48,11 +48,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/*/categories/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/*/categories/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/*/projects/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/*/projects/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/projects/**").permitAll()
+                        .anyRequest().authenticated()
 
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
