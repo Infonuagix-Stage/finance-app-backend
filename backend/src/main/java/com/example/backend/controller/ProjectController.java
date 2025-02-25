@@ -69,20 +69,18 @@ public class ProjectController {
         dto.setCreatedAt(project.getCreatedAt());
         return dto;
     }
-    @PutMapping("/{projectId}")
+    @PutMapping("/{id}")
     public ResponseEntity<ProjectResponseDTO> updateProject(
             @PathVariable Long userId,
-            @PathVariable Long projectId,
+            @PathVariable Long id,
             @RequestBody ProjectRequestDTO projectRequestDTO) {
 
-        // Vérifier que le projet existe et appartient à l'utilisateur
-        Optional<Project> projectOptional = projectService.findByIdAndUserId(projectId, userId);
+        Optional<Project> projectOptional = projectService.findByIdAndUserId(id, userId);
         if (projectOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         Project project = projectOptional.get();
-        // Mettre à jour les champs avec les valeurs du DTO
         project.setName(projectRequestDTO.getName());
         project.setTargetAmount(projectRequestDTO.getTargetAmount());
         project.setSavedAmount(projectRequestDTO.getSavedAmount());
@@ -90,12 +88,9 @@ public class ProjectController {
         project.setPriority(projectRequestDTO.getPriority());
         project.setMonthlyContribution(projectRequestDTO.getMonthlyContribution());
 
-        // Sauvegarder la modification
         Project updatedProject = projectService.save(project);
 
-        // Convertir l'entité mise à jour en DTO de réponse
         ProjectResponseDTO responseDTO = projectService.convertToResponseDTO(updatedProject);
-
         return ResponseEntity.ok(responseDTO);
     }
 
