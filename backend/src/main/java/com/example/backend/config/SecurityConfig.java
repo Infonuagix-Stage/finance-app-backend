@@ -19,7 +19,7 @@ import java.util.Arrays;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${FRONTEND_URL:https://finance-app-frontend-8mb0.onrender.com}")
+    @Value("${FRONTEND_URL}")
     private String frontendUrl;
 
     @Bean
@@ -29,7 +29,7 @@ public class SecurityConfig {
             frontendUrl = dotenv.get("FRONTEND_URL");
         }
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://finance-app-frontend-8mb0.onrender.com"));
+        configuration.setAllowedOrigins(Arrays.asList(frontendUrl));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
