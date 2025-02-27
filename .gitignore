@@ -49,3 +49,8 @@ frontend/coverage/
 # ==========================
 /tmp/
 *.tmp
+/.idea/finance-app-backend.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
