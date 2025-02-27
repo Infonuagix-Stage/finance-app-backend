@@ -49,3 +49,5 @@ frontend/coverage/
 # ==========================
 /tmp/
 *.tmp
+/.idea/.gitignore
+/.idea/vcs.xml
