@@ -21,7 +21,8 @@ backend/.env
 
 # Ignorer les fichiers de configuration sensible
 backend/src/main/resources/.env
-backend/src/main/resources/application-local.properties
+.env
+**/.env
 backend/src/main/resources/*.secrets
 
 # IntelliJ IDEA / Eclipse / VSCodee
