@@ -27,11 +27,10 @@ A backend API for managing personal finance data, including authentication, tran
   - Spring Boot 3  
   - Spring Security (JWT Authentication)  
   - Spring Data JPA (Hibernate)  
-  - MySQL (or PostgreSQL)  
+  - PostgreSQL
 - **Tools**:  
   - Maven  
-  - Lombok  
-  - Docker (optional)  
+  - Docker 
 
 ## 👥 Installation  
 
@@ -56,19 +55,13 @@ A backend API for managing personal finance data, including authentication, tran
    CREATE DATABASE finance_app;
    ```
 
-2. Configure `application.properties` (or `application.yml`):  
+2. Configure `application.properties` and make sure the environment variables are assigned to some values:  
 
    ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/finance_app
-   spring.datasource.username=postgres
-   spring.datasource.password=yourpassword
-   spring.jpa.hibernate.ddl-auto=update
+   spring.datasource.url=${DATABASE_URL}
+   spring.datasource.username=${DATABASE_USERNAME}
+   spring.datasource.password=${DATABASE_PASSWORD}
    ```
-3. Create a .env file at the root:
-```env
-SECRET_KEY= (generate a 64 bits key)
-FRONTEND_URL=http://localhost:3000
-```
 
 ## ▶️ Running the Application  
 
