@@ -1,20 +1,28 @@
 package com.example.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 public class ProjectRequestDTO {
+    @NotNull(message = "Le nom du projet ne peut pas être vide")
     private String name;
+    @NotNull(message = "Le montant cible ne peut pas être vide")
     private Double targetAmount;
+
     private Double savedAmount;
 
-    // If you are receiving the date as a string, you can format it:
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate deadline;
-
+    @NotNull(message = "La priorité ne peut pas être vide")
     private String priority;
+
     private Double monthlyContribution;
 
+    private Long userId;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "La date limite ne peut pas être vide")
+    private LocalDate deadline;
     // Getters and setters
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
