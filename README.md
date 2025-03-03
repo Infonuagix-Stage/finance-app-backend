@@ -37,8 +37,8 @@ A backend API for managing personal finance data, including authentication, tran
 1. Clone the repository:  
 
    ```bash
-   git clone https://github.com/your-username/finance-app-backend.git
-   cd finance-app-backend
+   git clone https://github.com/Infonuagix-Stage/finance-app-backend.git
+   cd backend
    ```
 
 2. Install dependencies:  
