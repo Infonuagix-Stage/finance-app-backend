@@ -1,9 +1,17 @@
 package com.example.backend.dataaccess.debt;
 
+import com.example.backend.dataaccess.user.User;
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "debt")
 public class Debt {
@@ -12,54 +20,44 @@ public class Debt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId; // ID de l'utilisateur associé à cette dette
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID debtId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;  // Remplace `userId` par une relation avec `User`
 
     @Column(nullable = false)
-    private String creditor; // Nom du créancier (personne ou entité à qui l'argent est dû)
+    private String creditor;
 
     @Column(nullable = false)
-    private Double amountOwed; // Montant total de la dette
+    private Double amountOwed;
 
     @Column(nullable = false)
-    private Double amountPaid = 0.0; // Montant déjà remboursé
+    private Double amountPaid = 0.0;
 
     @Column(nullable = false)
-    private LocalDate dueDate; // Date d'échéance de la dette
+    private LocalDate dueDate;
 
     @Column(nullable = false)
-    private Double monthlyPayment; // Montant à payer chaque mois
+    private Double monthlyPayment;
 
     @Column(nullable = false)
-    private String status = "Pending"; // Statut de la dette (ex: "Pending", "Paid", "Overdue")
+    private String status = "Pending";
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now(); // Date de création de la dette
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // Getter pour userId
+    public Long getUserId() {
+        return user != null ? user.getId() : null;
+    }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public String getCreditor() { return creditor; }
-    public void setCreditor(String creditor) { this.creditor = creditor; }
-
-    public Double getAmountOwed() { return amountOwed; }
-    public void setAmountOwed(Double amountOwed) { this.amountOwed = amountOwed; }
-
-    public Double getAmountPaid() { return amountPaid; }
-    public void setAmountPaid(Double amountPaid) { this.amountPaid = amountPaid; }
-
-    public LocalDate getDueDate() { return dueDate; }
-    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
-
-    public Double getMonthlyPayment() { return monthlyPayment; }
-    public void setMonthlyPayment(Double monthlyPayment) { this.monthlyPayment = monthlyPayment; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    // Setter pour userId
+    public void setUserId(Long userId) {
+        if (this.user == null) {
+            this.user = new User();
+        }
+        this.user.setId(userId);
+    }
 }

@@ -1,8 +1,7 @@
 package com.example.backend.presentation.category;
 
-import com.example.backend.business.transaction.ExpenseService;
-import com.example.backend.business.transaction.IncomeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.backend.business.transaction.TransactionService;
+import com.example.backend.dataaccess.transaction.TransactionType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,25 +11,19 @@ import java.math.BigDecimal;
 @RequestMapping("/api/v1/users/{userId}/categories/{categoryId}")
 public class CategoryTotalController {
 
-    @Autowired
-    private IncomeService incomeService;
+    private final TransactionService transactionService;
 
-    @Autowired
-    private ExpenseService expenseService;
+    public CategoryTotalController(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
 
     @GetMapping("/total")
     public ResponseEntity<BigDecimal> getTotalForCategory(
             @PathVariable Long userId,
             @PathVariable Long categoryId,
-            @RequestParam String type) {
-        BigDecimal total;
-        if ("INCOME".equalsIgnoreCase(type)) {
-            total = incomeService.getTotalForCategory(userId, categoryId);
-        } else if ("EXPENSE".equalsIgnoreCase(type)) {
-            total = expenseService.getTotalForCategory(userId, categoryId);
-        } else {
-            total = BigDecimal.ZERO;
-        }
+            @RequestParam("type") TransactionType type) {
+
+        BigDecimal total = transactionService.getTotalForCategory(userId, categoryId, type);
         return ResponseEntity.ok(total);
     }
 }

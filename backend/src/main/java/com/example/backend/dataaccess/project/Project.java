@@ -1,20 +1,35 @@
 package com.example.backend.dataaccess.project;
 
+import com.example.backend.dataaccess.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "project")
 public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // Clé primaire auto-incrémentée
 
-    // Use @Column since we're not mapping a relationship, just a basic attribute.
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID projectId; // UUID unique généré automatiquement
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // Relation avec User
 
     @Column(nullable = false)
     private String name;
@@ -35,33 +50,14 @@ public class Project {
     private Double monthlyContribution;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreationTimestamp
+    private LocalDateTime createdAt; // Date de création auto-générée
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public Double getTargetAmount() { return targetAmount; }
-    public void setTargetAmount(Double targetAmount) { this.targetAmount = targetAmount; }
-
-    public Double getSavedAmount() { return savedAmount; }
-    public void setSavedAmount(Double savedAmount) { this.savedAmount = savedAmount; }
-
-    public LocalDate getDeadline() { return deadline; }
-    public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
-
-    public String getPriority() { return priority; }
-    public void setPriority(String priority) { this.priority = priority; }
-
-    public Double getMonthlyContribution() { return monthlyContribution; }
-    public void setMonthlyContribution(Double monthlyContribution) { this.monthlyContribution = monthlyContribution; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    // ⚠ Génération automatique de `projectId` avant insertion
+    @PrePersist
+    public void generateProjectId() {
+        if (this.projectId == null) {
+            this.projectId = UUID.randomUUID();
+        }
+    }
 }
-

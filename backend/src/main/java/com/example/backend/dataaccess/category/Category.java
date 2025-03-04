@@ -2,10 +2,14 @@ package com.example.backend.dataaccess.category;
 
 import com.example.backend.dataaccess.user.User;
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "category")
 public class Category {
@@ -14,6 +18,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true, updatable = false)
     private String name;
 
     @Column(columnDefinition = "TEXT")
@@ -28,66 +33,10 @@ public class Category {
     private User user;
 
     @Column(name = "creation_date", updatable = false)
-    @CreationTimestamp
     private LocalDateTime creationDate;
 
-    // Constructeurs
-    public Category() { }
-
-    public Category(String name, String description, CategoryType type, User user) {
-        this.name = name;
-        this.description = description;
-        this.type = type;
-        this.user = user;
-    }
-
-    // Getters et setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public CategoryType getType() {
-        return type;
-    }
-
-    public void setType(CategoryType type) {
-        this.type = type;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
+    @PrePersist
+    public void setCreationDate() {
+        this.creationDate = LocalDateTime.now();
     }
 }
