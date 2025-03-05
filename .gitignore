@@ -12,38 +12,36 @@ Thumbs.db
 # ==========================
 
 # Ignorer les fichiers générés par Maven
-backend/target/
-backend/*.jar
-backend/*.war
-backend/*.ear
-backend/*.class
-backend/.env
+/target/
+*.jar
+*.war
+*.ear
+*.class
+.env
 
 # Ignorer les fichiers de configuration sensible
-backend/src/main/resources/.env
-.env
+src/main/resources/.env
+src/main/resources/*.secrets
 **/.env
-backend/src/main/resources/*.secrets
+.env
 
-# IntelliJ IDEA / Eclipse / VSCodee
-backend/.idea/
-backend/.vscode/
-backend/.classpath
-backend/.project
-backend/.settings/
+# IntelliJ IDEA / Eclipse / VSCode
+.idea/
+.vscode/
+.classpath
+.project
+.settings/
 
 # Maven Wrapper
-backend/.mvn/
-backend/mvnw
-backend/mvnw.cmd
-
+.mvn/
+mvnw
+mvnw.cmd
 
 # ==========================
 # 🧪  TESTS & COUVERTURE
 # ==========================
 /test/
-backend/coverage/
-frontend/coverage/
+/coverage/
 
 # ==========================
 # 🔍  DIVERS
@@ -55,4 +53,3 @@ frontend/coverage/
 /.idea/modules.xml
 /.idea/vcs.xml
 /.idea/workspace.xml
-
