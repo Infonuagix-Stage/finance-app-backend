@@ -40,12 +40,12 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean install
-        working-directory: backend
+        working-directory: .
 
       # Si vos tests ne sont pas déjà inclus dans "mvn clean install", laissez cette étape :
       - name: Run tests
         run: mvn test
-        working-directory: backend
+        working-directory: .
 
       - name: Convert repository name to lowercase
         run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
