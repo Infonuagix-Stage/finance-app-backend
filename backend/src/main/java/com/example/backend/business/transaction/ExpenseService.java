@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,14 +29,14 @@ public class ExpenseService {
     }
 
     // Nouvelle méthode pour récupérer les dépenses d'un utilisateur dans une catégorie donnée
-    public List<ExpenseResponseDTO> getAllExpenses(Long userId, Long categoryId) {
-        return expenseRepository.findByUserIdAndCategoryId(userId, categoryId)
+    public List<ExpenseResponseDTO> getAllExpenses(UUID userId, UUID categoryId) {
+        return expenseRepository.findByUser_UserIdAndCategory_CategoryId(userId, categoryId)
                 .stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    public ExpenseResponseDTO getExpenseById(Long id) {
+    public ExpenseResponseDTO getExpenseById(UUID id) {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id " + id));
         return mapToResponseDTO(expense);
@@ -59,7 +60,7 @@ public class ExpenseService {
         return mapToResponseDTO(savedExpense);
     }
 
-    public ExpenseResponseDTO updateExpense(Long id, ExpenseRequestDTO expenseRequestDTO) {
+    public ExpenseResponseDTO updateExpense(UUID id, ExpenseRequestDTO expenseRequestDTO) {
         System.out.println("ID reçu dans le service : " + id);
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id " + id));
@@ -78,7 +79,7 @@ public class ExpenseService {
         return mapToResponseDTO(updatedExpense);
     }
 
-    public void deleteExpense(Long id) {
+    public void deleteExpense(UUID id) {
         Expense expense = expenseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Expense not found with id " + id));
         expenseRepository.delete(expense);
@@ -97,13 +98,9 @@ public class ExpenseService {
     }
 
 
-    public BigDecimal getTotalForCategory(Long userId, Long categoryId) {
+    public BigDecimal getTotalForCategory(UUID userId, UUID categoryId) {
         return expenseRepository.getTotalForCategory(userId, categoryId);
     }
-
-//    public BigDecimal getTotalForUser(Long userId) {
-//        return expenseRepository.getTotalForUser(userId);
-//    }
 
 
 }

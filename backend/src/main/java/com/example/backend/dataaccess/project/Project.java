@@ -2,34 +2,26 @@ package com.example.backend.dataaccess.project;
 
 import com.example.backend.dataaccess.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "project")
 public class Project {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Clé primaire auto-incrémentée
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-incrémentation en base
+    private Long id;
 
     @Column(nullable = false, unique = true, updatable = false)
-    private UUID projectId; // UUID unique généré automatiquement
+    private UUID projectId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Relation avec User
+    @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private String name;
@@ -53,11 +45,92 @@ public class Project {
     @CreationTimestamp
     private LocalDateTime createdAt; // Date de création auto-générée
 
-    // ⚠ Génération automatique de `projectId` avant insertion
     @PrePersist
     public void generateProjectId() {
         if (this.projectId == null) {
             this.projectId = UUID.randomUUID();
         }
+    }
+
+    //  Getters
+    public Long getId() {
+        return id;
+    }
+
+    public UUID getProjectId() {
+        return projectId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Double getTargetAmount() {
+        return targetAmount;
+    }
+
+    public Double getSavedAmount() {
+        return savedAmount;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public Double getMonthlyContribution() {
+        return monthlyContribution;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    //  Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setProjectId(UUID projectId) {
+        this.projectId = projectId;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTargetAmount(Double targetAmount) {
+        this.targetAmount = targetAmount;
+    }
+
+    public void setSavedAmount(Double savedAmount) {
+        this.savedAmount = savedAmount;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setMonthlyContribution(Double monthlyContribution) {
+        this.monthlyContribution = monthlyContribution;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

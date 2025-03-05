@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface DebtRepository extends JpaRepository<Debt, Long> {
-    List<Debt> findByUserId(Long userId); // Trouver toutes les dettes d'un utilisateur
+    List<Debt> findByUserId(Long userId);
 
     Optional<Debt> findByIdAndUserId(Long debtId, Long userId);
 }

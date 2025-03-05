@@ -20,9 +20,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
-        String token = authService.register(user);
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
+        Map<String, Object> response = authService.register(user);
         return ResponseEntity.ok(response);
     }
 
