@@ -3,9 +3,9 @@
 # Étape 1 : Build (Maven + Java 17)
 FROM maven:3.9.4-eclipse-temurin-17 AS builder
 WORKDIR /app
-# Copier le pom.xml et le dossier src depuis /backend
-COPY backend/pom.xml .
-COPY backend/src ./src
+# Copier le pom.xml et le dossier src (sans backend)
+COPY pom.xml .
+COPY src ./src
 RUN mvn dependency:go-offline
 RUN mvn clean package -DskipTests
 
