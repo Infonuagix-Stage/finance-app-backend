@@ -1,18 +1,20 @@
 package com.example.backend.presentation.user;
 
+import java.util.UUID;
+
 public class UserResponseDTO {
 
-    private Long id;
+    private UUID userId;
     private String name;
     private String email;
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public UUID getId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(UUID userId) {
+        this.userId = userId;
     }
 
     public String getName() {

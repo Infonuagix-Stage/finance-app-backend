@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AuthService {
@@ -45,19 +43,33 @@ public class AuthService {
     }
 
     @Transactional
-    public String register(User user) {
+    public Map<String, Object> register(User user) {
         // Vérifier si l'email existe déjà
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
-        if (existingUser.isEmpty()) {
-            // Encoder le mot de passe et sauvegarder l'utilisateur
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            User savedUser = userRepository.save(user);
-            return generateToken(savedUser); // Passer l'objet User entier
+        if (existingUser.isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Email déjà utilisé pour un autre compte."
+            );
         }
-        throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED, "Email déjà utilisé pour un autre compte."
-        );
+
+        // Assigner un UUID et encoder le mot de passe
+        user.setUserId(UUID.randomUUID());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Sauvegarder l'utilisateur en base de données
+        User savedUser = userRepository.save(user);
+
+        // Générer un token
+        String token = generateToken(savedUser);
+
+        // Retourner l'UUID + le token
+        Map<String, Object> response = new HashMap<>();
+        response.put("userId", savedUser.getUserId()); // UUID de l'utilisateur
+        response.put("token", token); // JWT
+
+        return response;
     }
+
 
     @Transactional
     public String login(String email, String password) {
@@ -75,14 +87,15 @@ public class AuthService {
     }
 
 
-    private String generateToken(User user) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(user.getEmail())  // Utiliser l'email comme sujet du token
-                .claim("id", user.getId())     // Ajouter l'ID utilisateur dans le payload
-                .claim("name", user.getName()) // Ajouter le nom dans le payload
+                .setSubject(user.getEmail())
+                .claim("id", user.getUserId())  // Ajoute l'UUID au token
+                .claim("name", user.getName())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expiration dans 1 heure
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expire après 1 heure
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
+
 }

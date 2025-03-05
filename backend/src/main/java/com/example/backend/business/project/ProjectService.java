@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -16,11 +18,11 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public List<Project> getAllProjectsByUser(Long userId) {
-        return projectRepository.findByUserId(userId);
+    public List<Project> getAllProjectsByUser(UUID userId) {
+        return projectRepository.findByUser_UserId(userId);
     }
 
-    public Optional<Project> getProjectById(Long id) {
+    public Optional<Project> getProjectById(UUID id) {
         return projectRepository.findById(id);
     }
 
@@ -28,7 +30,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public void deleteProject(Long id) {
+    public void deleteProject(UUID id) {
         projectRepository.deleteById(id);
     }
 
@@ -36,8 +38,8 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Optional<Project> findByIdAndUserId(Long projectId, Long userId) {
-        return projectRepository.findByIdAndUserId(projectId, userId);
+    public Optional<Project> findByIdAndUserId(UUID projectId, UUID userId) {
+        return projectRepository.findByProjectIdAndUser_UserId(projectId, userId);
     }
 
     public ProjectResponseDTO convertToResponseDTO(Project project) {
@@ -48,18 +50,15 @@ public class ProjectService {
         dto.setName(project.getName());
         dto.setTargetAmount(project.getTargetAmount());
         dto.setSavedAmount(project.getSavedAmount());
-
-        // Pour la date d'échéance, vous pouvez la formater comme vous le souhaitez
-        dto.setDeadline(project.getDeadline() != null ? project.getDeadline() : null);
-
+        dto.setDeadline(project.getDeadline());
         dto.setPriority(project.getPriority());
         dto.setMonthlyContribution(project.getMonthlyContribution());
 
-        // Comme nous utilisons un Long pour stocker l'ID utilisateur
-        dto.setUserId(project.getUserId());
+        // Pour l'ID utilisateur, on récupère l'ID via l'objet User
+        dto.setUserId(project.getUser() != null ? project.getUser().getUserId() : null);
 
-        // Formater la date de création (createdAt) en chaîne, ou utiliser un DateTimeFormatter pour un format personnalisé
-        dto.setCreatedAt(project.getCreatedAt() != null ? project.getCreatedAt() : null);
+        // Date de création
+        dto.setCreatedAt(project.getCreatedAt());
 
         return dto;
     }

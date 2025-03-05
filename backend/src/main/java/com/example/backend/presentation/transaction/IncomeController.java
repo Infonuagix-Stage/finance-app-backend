@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users/{userId}/categories/{categoryId}/incomes")
@@ -19,15 +20,15 @@ public class IncomeController {
     // GET : Récupérer toutes les incomes pour un utilisateur dans une catégorie donnée
     @GetMapping
     public ResponseEntity<List<IncomeResponseDTO>> getAllIncomes(
-            @PathVariable("userId") Long userId,
-            @PathVariable("categoryId") Long categoryId) {
+            @PathVariable("userId") UUID userId,
+            @PathVariable("categoryId") UUID categoryId) {
         List<IncomeResponseDTO> incomes = incomeService.getAllIncomes(userId, categoryId);
         return ResponseEntity.ok(incomes);
     }
 
     // GET : Récupérer une income par ID
     @GetMapping("/{id}")
-    public ResponseEntity<IncomeResponseDTO> getIncomeById(@PathVariable Long id) {
+    public ResponseEntity<IncomeResponseDTO> getIncomeById(@PathVariable UUID id) {
         IncomeResponseDTO income = incomeService.getIncomeById(id);
         return ResponseEntity.ok(income);
     }

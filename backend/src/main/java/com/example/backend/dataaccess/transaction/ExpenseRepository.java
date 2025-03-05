@@ -9,15 +9,13 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @Repository
-public interface ExpenseRepository extends JpaRepository<Expense, Long> {
-    List<Expense> findByUser_IdAndCategory_Id(Long userId, Long categoryId);
-
+public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
 
 
     @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.id = :userId AND e.category.id = :categoryId")
-    BigDecimal getTotalForCategory(@Param("userId") Long userId, @Param("categoryId") Long categoryId);
+    BigDecimal getTotalForCategory(@Param("userId") UUID userId, @Param("categoryId") UUID categoryId);
 
-    List<Expense> findByUserIdAndCategoryId(Long userId, Long categoryId);
+    List<Expense> findByUser_UserIdAndCategory_CategoryId(UUID userId, UUID categoryId);
 
 
 }

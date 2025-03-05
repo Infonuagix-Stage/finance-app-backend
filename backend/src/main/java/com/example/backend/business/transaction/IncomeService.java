@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,17 +29,17 @@ public class IncomeService {
     }
 
     // Récupère toutes les incomes pour un utilisateur dans une catégorie donnée
-    public List<IncomeResponseDTO> getAllIncomes(Long userId, Long categoryId) {
-        List<Income> incomes = incomeRepository.findByUserIdAndCategoryId(userId, categoryId);
+    public List<IncomeResponseDTO> getAllIncomes(UUID userId, UUID categoryId) {
+        List<Income> incomes = incomeRepository.findByUser_UserIdAndCategory_CategoryId(userId, categoryId);
         return incomes.stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
     // Récupère une income par son ID
-    public IncomeResponseDTO getIncomeById(Long id) {
-        Income income = incomeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Income not found with id " + id));
+    public IncomeResponseDTO getIncomeById(UUID incomeId) {
+        Income income = incomeRepository.findByIncomeId(incomeId)
+                .orElseThrow(() -> new RuntimeException("Income not found with id " + incomeId));
         return mapToResponseDTO(income);
     }
 
@@ -84,7 +85,7 @@ public class IncomeService {
     }
 
     // Calcule le total des incomes pour une catégorie donnée d'un utilisateur
-    public BigDecimal getTotalForCategory(Long userId, Long categoryId) {
+    public BigDecimal getTotalForCategory(UUID userId, UUID categoryId) {
         return incomeRepository.getTotalForCategory(userId, categoryId);
     }
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,7 +33,7 @@ public class UserController {
 
     // Get user by ID
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable UUID id) {
         User user = userService.getUserById(id);
         return ResponseEntity.ok(userService.toResponseDTO(user));
     }
@@ -47,7 +48,7 @@ public class UserController {
     // Update user
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> updateUser(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UserRequestDTO userRequestDTO) {
         User updatedUser = userService.updateUser(id, userService.toEntity(userRequestDTO));
         return ResponseEntity.ok(userService.toResponseDTO(updatedUser));
@@ -55,7 +56,7 @@ public class UserController {
 
     // Delete user
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

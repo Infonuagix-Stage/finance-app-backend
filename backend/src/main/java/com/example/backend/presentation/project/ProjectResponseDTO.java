@@ -2,6 +2,7 @@ package com.example.backend.presentation.project;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class ProjectResponseDTO {
     private Long id;
@@ -11,7 +12,7 @@ public class ProjectResponseDTO {
     private LocalDate deadline;
     private String priority;
     private Double monthlyContribution;
-    private Long userId;
+    private UUID userId;
     private LocalDateTime createdAt;
 
     // Getters and setters
@@ -36,8 +37,8 @@ public class ProjectResponseDTO {
     public Double getMonthlyContribution() { return monthlyContribution; }
     public void setMonthlyContribution(Double monthlyContribution) { this.monthlyContribution = monthlyContribution; }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public UUID getUserId() { return userId; }
+    public void setUserId(UUID userId) { this.userId = userId; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

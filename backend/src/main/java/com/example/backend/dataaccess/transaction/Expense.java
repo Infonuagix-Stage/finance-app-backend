@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "expense")
@@ -16,37 +17,38 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Montant de la dépense
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID expenseId;  // Identifiant UUID unique
+
     private BigDecimal amount;
 
-    // Date de la dépense
     @Column(name = "expense_date")
     private LocalDate expenseDate;
 
-    // Description de la dépense
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Catégorie associée à cette dépense (doit être de type Category, ou ExpenseCategory si vous utilisez l'héritage)
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    // Utilisateur qui a réalisé la dépense
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Date de création de l'enregistrement
     @Column(name = "creation_date", updatable = false)
     @CreationTimestamp
     private LocalDateTime creationDate;
 
-    // Constructeur par défaut
+    @PrePersist
+    public void prePersist() {
+        if (this.expenseId == null) {
+            this.expenseId = UUID.randomUUID();
+        }
+    }
     public Expense() {
     }
 
-    // Constructeur avec paramètres
     public Expense(BigDecimal amount, LocalDate expenseDate, String description, Category category, User user) {
         this.amount = amount;
         this.expenseDate = expenseDate;
