@@ -1,20 +1,27 @@
 package com.example.backend.dataaccess.project;
 
+import com.example.backend.dataaccess.user.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "project")
 public class Project {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-incrémentation en base
     private Long id;
 
-    // Use @Column since we're not mapping a relationship, just a basic attribute.
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(nullable = false, unique = true, updatable = false)
+    private UUID projectId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private String name;
@@ -35,33 +42,95 @@ public class Project {
     private Double monthlyContribution;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreationTimestamp
+    private LocalDateTime createdAt; // Date de création auto-générée
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @PrePersist
+    public void generateProjectId() {
+        if (this.projectId == null) {
+            this.projectId = UUID.randomUUID();
+        }
+    }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    //  Getters
+    public Long getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public UUID getProjectId() {
+        return projectId;
+    }
 
-    public Double getTargetAmount() { return targetAmount; }
-    public void setTargetAmount(Double targetAmount) { this.targetAmount = targetAmount; }
+    public User getUser() {
+        return user;
+    }
 
-    public Double getSavedAmount() { return savedAmount; }
-    public void setSavedAmount(Double savedAmount) { this.savedAmount = savedAmount; }
+    public String getName() {
+        return name;
+    }
 
-    public LocalDate getDeadline() { return deadline; }
-    public void setDeadline(LocalDate deadline) { this.deadline = deadline; }
+    public Double getTargetAmount() {
+        return targetAmount;
+    }
 
-    public String getPriority() { return priority; }
-    public void setPriority(String priority) { this.priority = priority; }
+    public Double getSavedAmount() {
+        return savedAmount;
+    }
 
-    public Double getMonthlyContribution() { return monthlyContribution; }
-    public void setMonthlyContribution(Double monthlyContribution) { this.monthlyContribution = monthlyContribution; }
+    public LocalDate getDeadline() {
+        return deadline;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public String getPriority() {
+        return priority;
+    }
+
+    public Double getMonthlyContribution() {
+        return monthlyContribution;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    //  Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setProjectId(UUID projectId) {
+        this.projectId = projectId;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTargetAmount(Double targetAmount) {
+        this.targetAmount = targetAmount;
+    }
+
+    public void setSavedAmount(Double savedAmount) {
+        this.savedAmount = savedAmount;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setMonthlyContribution(Double monthlyContribution) {
+        this.monthlyContribution = monthlyContribution;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
-

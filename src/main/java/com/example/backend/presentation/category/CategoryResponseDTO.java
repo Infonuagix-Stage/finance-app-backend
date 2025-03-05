@@ -1,32 +1,34 @@
 package com.example.backend.presentation.category;
 
+import java.util.UUID;
+
 public class CategoryResponseDTO {
-    private Long id;
+    private UUID categoryId;  // Utilisation d'UUID au lieu de Long
     private String name;
     private String description;
     private String creationDate;
-    private String type;  // Utilisez String pour faciliter la communication via JSON
-    private Long user_id;
+    private String type;  // Utilisé comme String pour JSON
+    private UUID userId;  // Utilisation d'UUID au lieu de Long
 
     public CategoryResponseDTO() {
     }
 
     // Constructeur avec paramètres
-    public CategoryResponseDTO(String name, Long id, String description, String creationDate, String type, Long user_id) {
+    public CategoryResponseDTO(UUID categoryId, String name, String description, String creationDate, String type, UUID userId) {
+        this.categoryId = categoryId;
         this.name = name;
-        this.id = id;
         this.description = description;
         this.creationDate = creationDate;
         this.type = type;
-        this.user_id = user_id;
+        this.userId = userId;
     }
 
     // Getters and setters
-    public Long getId() {
-        return id;
+    public UUID getCategoryId() {
+        return categoryId;
     }
-    public void setId(Long id) {
-        this.id = id;
+    public void setCategoryId(UUID categoryId) {
+        this.categoryId = categoryId;
     }
     public String getName() {
         return name;
@@ -52,10 +54,10 @@ public class CategoryResponseDTO {
     public void setType(String type) {
         this.type = type;
     }
-    public Long getUserId() {
-        return user_id;
+    public UUID getUserId() {
+        return userId;
     }
-    public void setUserId(Long user_id) {
-        this.user_id = user_id;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 }

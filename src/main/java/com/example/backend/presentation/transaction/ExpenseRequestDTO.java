@@ -2,13 +2,14 @@ package com.example.backend.presentation.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 public class ExpenseRequestDTO {
     private BigDecimal amount;
     private LocalDate expenseDate;
     private String description;
-    private Long categoryId; // ID of the associated category
-    private Long userId;     // ID of the associated user
+    private UUID categoryId; // ID of the associated category
+    private UUID userId;     // ID of the associated user
 
     // Getters and Setters
     public BigDecimal getAmount() {
@@ -35,19 +36,19 @@ public class ExpenseRequestDTO {
         this.description = description;
     }
 
-    public Long getCategoryId() {
+    public UUID getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(UUID categoryId) {
         this.categoryId = categoryId;
     }
 
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 }

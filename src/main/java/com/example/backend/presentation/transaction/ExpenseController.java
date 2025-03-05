@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users/{userId}/categories/{categoryId}/expenses")
@@ -18,14 +19,14 @@ public class ExpenseController {
 
     @GetMapping
     public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses(
-            @PathVariable("userId") Long userId,
-            @PathVariable("categoryId") Long categoryId) {
+            @PathVariable("userId") UUID userId,
+            @PathVariable("categoryId") UUID categoryId) {
         List<ExpenseResponseDTO> expenses = expenseService.getAllExpenses(userId, categoryId);
         return ResponseEntity.ok(expenses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ExpenseResponseDTO> getExpenseById(@PathVariable Long id) {
+    public ResponseEntity<ExpenseResponseDTO> getExpenseById(@PathVariable UUID id) {
         ExpenseResponseDTO expense = expenseService.getExpenseById(id);
         return ResponseEntity.ok(expense);
     }
@@ -38,7 +39,7 @@ public class ExpenseController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ExpenseResponseDTO> updateExpense(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody ExpenseRequestDTO expenseRequestDTO
     ) {
         System.out.println(expenseRequestDTO.getAmount());
@@ -48,15 +49,8 @@ public class ExpenseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteExpense(@PathVariable UUID id) {
         expenseService.deleteExpense(id);
         return ResponseEntity.noContent().build();
     }
-//    @GetMapping("/total")
-//    public ResponseEntity<BigDecimal> getTotalForCategory(
-//            @PathVariable("userId") Long userId,
-//            @PathVariable("categoryId") Long categoryId) {
-//        BigDecimal total = expenseService.getTotalForCategory(userId, categoryId);
-//        return ResponseEntity.ok(total);
-//    }
 }
