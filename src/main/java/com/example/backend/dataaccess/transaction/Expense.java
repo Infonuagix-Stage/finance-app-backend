@@ -67,6 +67,14 @@ public class Expense {
         this.id = id;
     }
 
+    public UUID getExpenseId() {
+        return expenseId;
+    }
+
+    public void setId(UUID expenseId) {
+        this.expenseId = expenseId;
+    }
+
     public BigDecimal getAmount() {
         return amount;
     }

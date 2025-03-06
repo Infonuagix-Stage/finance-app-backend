@@ -18,12 +18,8 @@ public class Debt {
     @Column(nullable = false, unique = true, updatable = false)
     private UUID debtId;  // Identifiant UUID unique
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
     @Column(name = "user_id", insertable = false, updatable = false)
-    private Long userId;
+    private UUID userId;
 
     @Column(nullable = false)
     private String creditor;  // Nom du créancier
@@ -66,11 +62,8 @@ public class Debt {
         return debtId;
     }
 
-    public User getUser() {
-        return user;
-    }
 
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
@@ -112,9 +105,6 @@ public class Debt {
         this.debtId = debtId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public void setCreditor(String creditor) {
         this.creditor = creditor;
@@ -144,7 +134,7 @@ public class Debt {
         this.createdAt = createdAt;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 }

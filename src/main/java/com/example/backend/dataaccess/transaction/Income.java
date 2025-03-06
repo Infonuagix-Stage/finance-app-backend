@@ -63,6 +63,12 @@ public class Income {
     public void setId(Long id) {
         this.id = id;
     }
+    public UUID getIncomeId() {
+        return incomeId;
+    }
+    public void setId(UUID incomeId) {
+        this.incomeId = incomeId;
+    }
     public BigDecimal getAmount() {
         return amount;
     }

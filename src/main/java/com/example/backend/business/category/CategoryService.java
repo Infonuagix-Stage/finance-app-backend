@@ -52,7 +52,7 @@ public class CategoryService {
     }
 
     // Crée une catégorie de dépense pour un utilisateur
-    public CategoryResponseDTO createExpenseCategory(Long userId, Category category) {
+    public CategoryResponseDTO createExpenseCategory(UUID userId, Category category) {
         return null;
     }
 
