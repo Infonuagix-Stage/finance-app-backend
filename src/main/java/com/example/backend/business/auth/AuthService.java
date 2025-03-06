@@ -90,7 +90,7 @@ public class AuthService {
     public String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getEmail())
-                .claim("id", user.getUserId())  // Ajoute l'UUID au token
+                .claim("userId", user.getUserId())  // Ajoute l'UUID au token
                 .claim("name", user.getName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expire après 1 heure
