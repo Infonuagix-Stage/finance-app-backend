@@ -13,6 +13,8 @@ Thumbs.db
 
 # Ignorer les fichiers générés par Maven
 /target/
+target/
+target
 *.jar
 *.war
 *.ear
