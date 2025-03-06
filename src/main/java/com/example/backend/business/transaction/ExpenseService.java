@@ -87,7 +87,7 @@ public class ExpenseService {
 
     private ExpenseResponseDTO mapToResponseDTO(Expense expense) {
         ExpenseResponseDTO responseDTO = new ExpenseResponseDTO();
-        responseDTO.setId(expense.getId());
+        responseDTO.setIncomeId(expense.getExpenseId());
         responseDTO.setMontant(expense.getAmount());
         responseDTO.setExpenseDate(expense.getExpenseDate());
         responseDTO.setDescription(expense.getDescription());

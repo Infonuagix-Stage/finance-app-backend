@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public class ProjectRequestDTO {
     @NotNull(message = "Le nom du projet ne peut pas être vide")
@@ -18,7 +19,6 @@ public class ProjectRequestDTO {
 
     private Double monthlyContribution;
 
-    private Long userId;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "La date limite ne peut pas être vide")

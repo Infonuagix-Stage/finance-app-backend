@@ -62,8 +62,8 @@ public class IncomeService {
     }
 
     // Met à jour une income existante
-    public IncomeResponseDTO updateIncome(Long id, IncomeRequestDTO incomeRequestDTO) {
-        Income income = incomeRepository.findById(id)
+    public IncomeResponseDTO updateIncome(UUID id, IncomeRequestDTO incomeRequestDTO) {
+        Income income = incomeRepository.findByIncomeId(id)
                 .orElseThrow(() -> new RuntimeException("Income not found with id " + id));
         Category category = categoryRepository.findById(incomeRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + incomeRequestDTO.getCategoryId()));
@@ -78,7 +78,7 @@ public class IncomeService {
     }
 
     // Supprime une income par ID
-    public void deleteIncome(Long id) {
+    public void deleteIncome(UUID id) {
         Income income = incomeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Income not found with id " + id));
         incomeRepository.delete(income);
@@ -92,7 +92,7 @@ public class IncomeService {
     // Méthode privée pour mapper une entité Income en IncomeResponseDTO
     private IncomeResponseDTO mapToResponseDTO(Income income) {
         IncomeResponseDTO dto = new IncomeResponseDTO();
-        dto.setId(income.getId());
+        dto.setIncomeId(income.getIncomeId());
         dto.setAmount(income.getAmount());
         dto.setIncomeDate(income.getIncomeDate());
         dto.setDescription(income.getDescription());

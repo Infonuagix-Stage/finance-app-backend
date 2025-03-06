@@ -4,6 +4,7 @@ import com.example.backend.presentation.debt.DebtResponseDTO;
 import com.example.backend.dataaccess.debt.Debt;
 import com.example.backend.dataaccess.debt.DebtRepository;
 import org.springframework.stereotype.Service;
+import java.util.UUID;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public class DebtService {
      * @param userId ID de l'utilisateur.
      * @return Liste des dettes de l'utilisateur.
      */
-    public List<Debt> getAllDebtsByUserId(Long userId) {
+    public List<Debt> getAllDebtsByUser_UserId(UUID userId) {
         return debtRepository.findByUserId(userId);
     }
 
@@ -34,7 +35,7 @@ public class DebtService {
      * @param id ID de la dette.
      * @return La dette correspondante, ou un Optional vide si non trouvée.
      */
-    public Optional<Debt> getDebtById(Long id) {
+    public Optional<Debt> getDebtById(UUID id) {
         return debtRepository.findById(id);
     }
 
@@ -51,14 +52,14 @@ public class DebtService {
     /**
      * Met à jour une dette existante.
      *
-     * @param id          ID de la dette à mettre à jour.
+     * @param debtId          ID de la dette à mettre à jour.
      * @param updatedDebt Les nouvelles données de la dette.
      * @return La dette mise à jour.
      * @throws RuntimeException Si la dette n'est pas trouvée.
      */
-    public Debt updateDebt(Long id, Debt updatedDebt) {
-        Debt debt = debtRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Debt not found with id " + id));
+    public Debt updateDebt(UUID debtId, Debt updatedDebt) {
+        Debt debt = debtRepository.findById(debtId)
+                .orElseThrow(() -> new RuntimeException("Debt not found with id " + debtId));
 
         debt.setCreditor(updatedDebt.getCreditor());
         debt.setAmountOwed(updatedDebt.getAmountOwed());
@@ -73,10 +74,10 @@ public class DebtService {
     /**
      * Supprime une dette par son ID.
      *
-     * @param id ID de la dette à supprimer.
+     * @param debtId ID de la dette à supprimer.
      */
-    public void deleteDebt(Long id) {
-        debtRepository.deleteById(id);
+    public void deleteDebt(UUID debtId) {
+        debtRepository.deleteByDebtId(debtId);
     }
 
     /**
@@ -88,7 +89,7 @@ public class DebtService {
     public DebtResponseDTO convertToResponseDTO(Debt debt) {
         DebtResponseDTO dto = new DebtResponseDTO();
 
-        dto.setId(debt.getId());
+        dto.setDebtId(debt.getDebtId());
         dto.setUserId(debt.getUserId());
         dto.setCreditor(debt.getCreditor());
         dto.setAmountOwed(debt.getAmountOwed());
@@ -107,7 +108,7 @@ public class DebtService {
      * @param userId ID de l'utilisateur.
      * @return Liste des DebtResponseDTO.
      */
-    public List<DebtResponseDTO> getAllDebtDTOsByUserId(Long userId) {
+    public List<DebtResponseDTO> getAllDebtDTOsByUserId(UUID userId) {
         List<Debt> debts = debtRepository.findByUserId(userId);
         return debts.stream()
                 .map(this::convertToResponseDTO)
@@ -117,11 +118,12 @@ public class DebtService {
     /**
      * Récupère une dette par son ID et l'ID de l'utilisateur.
      *
-     * @param id     ID de la dette.
+     * @param debtId     ID de la dette.
      * @param userId ID de l'utilisateur.
      * @return La dette correspondante, ou un Optional vide si non trouvée.
      */
-    public Optional<Debt> findByIdAndUserId(Long id, Long userId) {
-        return debtRepository.findByIdAndUserId(id, userId);
+    public Optional<Debt> findByIdAndUserId(UUID debtId, UUID userId) {
+        return debtRepository.findByDebtIdAndUserId(debtId, userId);
     }
+
 }

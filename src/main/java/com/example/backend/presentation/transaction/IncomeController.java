@@ -44,7 +44,7 @@ public class IncomeController {
     // PUT : Mettre à jour une income existante
     @PutMapping("/{id}")
     public ResponseEntity<IncomeResponseDTO> updateIncome(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody IncomeRequestDTO incomeRequestDTO) {
         IncomeResponseDTO updatedIncome = incomeService.updateIncome(id, incomeRequestDTO);
         return ResponseEntity.ok(updatedIncome);
@@ -52,17 +52,9 @@ public class IncomeController {
 
     // DELETE : Supprimer une income par ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteIncome(@PathVariable Long id) {
-        incomeService.deleteIncome(id);
+    public ResponseEntity<Void> deleteIncome(@PathVariable UUID incomeId) {
+        incomeService.deleteIncome(incomeId);
         return ResponseEntity.noContent().build();
     }
 
-//    // GET : Obtenir le total des incomes pour une catégorie d'un utilisateur
-//    @GetMapping("/total")
-//    public ResponseEntity<BigDecimal> getTotalForCategory(
-//            @PathVariable("userId") Long userId,
-//            @PathVariable("categoryId") Long categoryId) {
-//        BigDecimal total = incomeService.getTotalForCategory(userId, categoryId);
-//        return ResponseEntity.ok(total);
-//    }
 }

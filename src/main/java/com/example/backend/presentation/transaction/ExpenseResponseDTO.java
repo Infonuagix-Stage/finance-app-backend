@@ -3,9 +3,10 @@ package com.example.backend.presentation.transaction;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class ExpenseResponseDTO {
-    private Long id;
+    private UUID expenseId;
     private BigDecimal montant;
     private LocalDate expenseDate;
     private String description;
@@ -14,12 +15,12 @@ public class ExpenseResponseDTO {
     private LocalDateTime creationDate;
 
     // Getters and Setters
-    public Long getId() {
-        return id;
+    public UUID getIncomeId() {
+        return expenseId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setIncomeId(UUID id) {
+        this.expenseId = expenseId;
     }
 
     public BigDecimal getMontant() {
