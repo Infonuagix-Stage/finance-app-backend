@@ -18,7 +18,7 @@ public class IncomeResponseDTO {
     public UUID getIncomeId() {
         return incomeId;
     }
-    public void setIncomeId(UUID id) {
+    public void setIncomeId(UUID incomeId) {
         this.incomeId = incomeId;
     }
     public BigDecimal getAmount() {

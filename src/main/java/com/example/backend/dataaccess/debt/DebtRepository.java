@@ -10,11 +10,7 @@ import java.util.UUID;
 public interface DebtRepository extends JpaRepository<Debt, UUID> {
     List<Debt> findByUserId(UUID userId);
 
-
-
-
     Optional<Debt> findByDebtIdAndUserId(UUID debtId, UUID userId);
-
 
     void deleteByDebtId(UUID debtId);
 }
