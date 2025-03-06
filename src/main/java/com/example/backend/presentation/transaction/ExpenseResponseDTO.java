@@ -15,11 +15,11 @@ public class ExpenseResponseDTO {
     private LocalDateTime creationDate;
 
     // Getters and Setters
-    public UUID getIncomeId() {
+    public UUID getExpenseId() {
         return expenseId;
     }
 
-    public void setIncomeId(UUID id) {
+    public void setExpenseId(UUID expenseId) {
         this.expenseId = expenseId;
     }
 
@@ -69,5 +69,9 @@ public class ExpenseResponseDTO {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public void setUserId(UUID userId) {
+
     }
 }
