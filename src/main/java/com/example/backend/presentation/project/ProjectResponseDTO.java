@@ -6,6 +6,17 @@ import java.util.UUID;
 
 public class ProjectResponseDTO {
     private Long id;
+
+    public UUID getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(UUID projectId) {
+        this.projectId = projectId;
+    }
+
+    private UUID projectId;
+
     private String name;
     private Double targetAmount;
     private Double savedAmount;
@@ -18,6 +29,7 @@ public class ProjectResponseDTO {
     // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

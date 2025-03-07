@@ -23,6 +23,7 @@ public class Project {
     @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
     private User user;
 
+
     @Column(nullable = false)
     private String name;
 

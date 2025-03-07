@@ -12,6 +12,7 @@ public class ProjectRequestDTO {
     @NotNull(message = "Le montant cible ne peut pas être vide")
     private Double targetAmount;
 
+
     private Double savedAmount;
 
     @NotNull(message = "La priorité ne peut pas être vide")

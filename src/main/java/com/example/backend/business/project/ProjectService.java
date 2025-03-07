@@ -22,16 +22,16 @@ public class ProjectService {
         return projectRepository.findByUser_UserId(userId);
     }
 
-    public Optional<Project> getProjectById(UUID id) {
-        return projectRepository.findById(id);
+    public Optional<Project> getProjectById(UUID projectId) {
+        return projectRepository.findProjectsByProjectId(projectId);
     }
 
     public Project createProject(Project project) {
         return projectRepository.save(project);
     }
 
-    public void deleteProject(UUID id) {
-        projectRepository.deleteById(id);
+    public void deleteProject(UUID projectId) {
+        projectRepository.deleteById(projectId);
     }
 
     public Project save(Project project) {
@@ -46,7 +46,7 @@ public class ProjectService {
         ProjectResponseDTO dto = new ProjectResponseDTO();
 
         // Copier les valeurs depuis l'entité Project
-        dto.setId(project.getId());
+        dto.setProjectId(project.getProjectId());
         dto.setName(project.getName());
         dto.setTargetAmount(project.getTargetAmount());
         dto.setSavedAmount(project.getSavedAmount());
