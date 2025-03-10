@@ -76,12 +76,9 @@ public class CategoryController {
             @PathVariable UUID userId,
             @RequestBody CategoryRequestDTO requestDTO) {
 
-        // On appelle simplement la méthode du service
         CategoryResponseDTO createdCategory = categoryService.createExpenseCategory(userId, requestDTO);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
     }
-
 
     @PostMapping("/income")
     public ResponseEntity<CategoryResponseDTO> createIncomeCategory(
@@ -89,8 +86,25 @@ public class CategoryController {
             @RequestBody CategoryRequestDTO requestDTO) {
 
         CategoryResponseDTO createdCategory = categoryService.createIncomeCategory(userId, requestDTO);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
+    }
+
+    // PUT : Mise à jour d'une catégorie par ID pour un utilisateur
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryResponseDTO> updateCategory(
+            @PathVariable UUID userId,
+            @PathVariable UUID id,
+            @RequestBody Category categoryDetails
+    ) {
+        CategoryResponseDTO updatedCategory = categoryService.updateCategoryForUser(userId, id, categoryDetails);
+        return ResponseEntity.ok(updatedCategory);
+    }
+
+    // DELETE : Suppression d'une catégorie par ID pour un utilisateur
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable UUID userId, @PathVariable UUID id) {
+        categoryService.deleteCategoryForUser(userId, id);
+        return ResponseEntity.noContent().build();
     }
 
 //    // (Optionnel) GET : Récupérer une catégorie par nom
