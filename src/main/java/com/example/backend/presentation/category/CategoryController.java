@@ -71,43 +71,22 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.convertToDTO(savedCategory));
     }
 
-    // 🔹 POST : Créer une catégorie de type EXPENSE
     @PostMapping("/expense")
     public ResponseEntity<CategoryResponseDTO> createExpenseCategory(
             @PathVariable UUID userId,
             @RequestBody CategoryRequestDTO requestDTO) {
 
-        // Vérifier l'existence de l'utilisateur
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-
-        // Forcer le type à EXPENSE
-        requestDTO.setType(CategoryType.EXPENSE.name());
-
-        // Convertir le DTO en entité et sauvegarder
-        Category category = categoryService.convertToEntity(requestDTO, user);
-        Category savedCategory = categoryService.saveCategory(category);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.convertToDTO(savedCategory));
+        CategoryResponseDTO createdCategory = categoryService.createExpenseCategory(userId, requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
     }
 
-    // 🔹 POST : Créer une catégorie de type INCOME
     @PostMapping("/income")
     public ResponseEntity<CategoryResponseDTO> createIncomeCategory(
             @PathVariable UUID userId,
             @RequestBody CategoryRequestDTO requestDTO) {
 
-        // Vérifier l'existence de l'utilisateur
-        User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-
-        // Forcer le type à INCOME
-        requestDTO.setType(CategoryType.INCOME.name());
-
-        // Convertir le DTO en entité et sauvegarder
-        Category category = categoryService.convertToEntity(requestDTO, user);
-        Category savedCategory = categoryService.saveCategory(category);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.convertToDTO(savedCategory));
+        CategoryResponseDTO createdCategory = categoryService.createIncomeCategory(userId, requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
     }
 
     // PUT : Mise à jour d'une catégorie par ID pour un utilisateur

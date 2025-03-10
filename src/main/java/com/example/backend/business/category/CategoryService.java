@@ -51,19 +51,39 @@ public class CategoryService {
         return convertToDTO(savedCategory);
     }
 
-    // Crée une catégorie de dépense pour un utilisateur
-    public CategoryResponseDTO createExpenseCategory(UUID userId, Category category) {
-        return null;
-    }
-
-    // Crée une catégorie de revenu (income) pour un utilisateur
-    public CategoryResponseDTO createIncomeCategory(UUID userId, Category category) {
+    // Crée une catégorie de dépense (EXPENSE) pour un utilisateur
+    public CategoryResponseDTO createExpenseCategory(UUID userId, CategoryRequestDTO requestDTO) {
         User user = findUserById(userId);
+
+        Category category = new Category();
+        // Génère un identifiant unique pour le champ categoryId
+        category.setCategoryId(UUID.randomUUID());
+        category.setName(requestDTO.getName());
+        category.setDescription(requestDTO.getDescription());
+        category.setType(CategoryType.EXPENSE); // Forcer le type à EXPENSE
         category.setUser(user);
-        category.setType(CategoryType.INCOME);
-        Category savedCategory = saveCategory(category);
+
+        Category savedCategory = categoryRepository.save(category);
         return convertToDTO(savedCategory);
     }
+
+    // Crée une catégorie de revenu (INCOME) pour un utilisateur
+    public CategoryResponseDTO createIncomeCategory(UUID userId, CategoryRequestDTO requestDTO) {
+        User user = findUserById(userId);
+
+        Category category = new Category();
+        category.setCategoryId(UUID.randomUUID());
+        category.setName(requestDTO.getName());
+        category.setDescription(requestDTO.getDescription());
+        category.setType(CategoryType.INCOME); // Forcer le type à INCOME
+        category.setUser(user);
+
+        Category savedCategory = categoryRepository.save(category);
+        return convertToDTO(savedCategory);
+    }
+
+
+
 
     // Méthode pour mettre à jour une catégorie pour un utilisateur
     public CategoryResponseDTO updateCategoryForUser(UUID userId, UUID categoryId, Category categoryDetails) {

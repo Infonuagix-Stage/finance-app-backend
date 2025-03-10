@@ -18,7 +18,7 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public List<Project> getAllProjectsByUser(UUID userId) {
+    public List<Project> getAllProjectsByUserId(UUID userId) {
         return projectRepository.findByUser_UserId(userId);
     }
 
@@ -62,4 +62,6 @@ public class ProjectService {
 
         return dto;
     }
+
+
 }

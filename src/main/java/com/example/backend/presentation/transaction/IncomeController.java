@@ -36,8 +36,11 @@ public class IncomeController {
     // POST : Créer une nouvelle income
     @PostMapping
     public ResponseEntity<IncomeResponseDTO> createIncome(
-                                                          @RequestBody IncomeRequestDTO incomeRequestDTO) {
-        IncomeResponseDTO createdIncome = incomeService.createIncome(incomeRequestDTO);
+            @PathVariable("userId") UUID userId,
+            @PathVariable("categoryId") UUID categoryId,
+            @RequestBody IncomeRequestDTO incomeRequestDTO
+    ) {
+        IncomeResponseDTO createdIncome = incomeService.createIncome(userId, categoryId, incomeRequestDTO);
         return ResponseEntity.ok(createdIncome);
     }
 
