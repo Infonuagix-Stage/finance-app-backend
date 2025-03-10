@@ -32,19 +32,19 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getAllProjectsByUser(userId));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Project> getProjectById(@PathVariable UUID id) {
-        Optional<Project> project = projectService.getProjectById(id);
+    @GetMapping("/{projectId}")
+    public ResponseEntity<Project> getProjectById(@PathVariable UUID projectId) {
+        Optional<Project> project = projectService.getProjectById(projectId);
         return project.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     @PostMapping
     public ResponseEntity<ProjectResponseDTO> createProject(
-            @PathVariable UUID userID,
+            @PathVariable UUID userId,
             @RequestBody ProjectRequestDTO projectRequestDTO) {
 
         // 1. Récupérer l'utilisateur via son ID
-        User user = userRepository.findById(userID)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userID));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
         // 2. Créer l'entité Project à partir du DTO
         Project project = new Project();
@@ -71,7 +71,7 @@ public class ProjectController {
     // Example conversion method
     private ProjectResponseDTO convertToResponseDTO(Project project) {
         ProjectResponseDTO dto = new ProjectResponseDTO();
-        dto.setId(project.getId());
+        dto.setProjectId(project.getProjectId());
         dto.setName(project.getName());
         dto.setTargetAmount(project.getTargetAmount());
         dto.setSavedAmount(project.getSavedAmount());
@@ -82,13 +82,13 @@ public class ProjectController {
         dto.setCreatedAt(project.getCreatedAt());
         return dto;
     }
-    @PutMapping("/{id}")
+    @PutMapping("/{projectId}")
     public ResponseEntity<ProjectResponseDTO> updateProject(
             @PathVariable UUID userId,
-            @PathVariable UUID id,
+            @PathVariable UUID projectId,
             @RequestBody ProjectRequestDTO projectRequestDTO) {
 
-        Optional<Project> projectOptional = projectService.findByIdAndUserId(id, userId);
+        Optional<Project> projectOptional = projectService.findByIdAndUserId(projectId, userId);
         if (projectOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -107,9 +107,9 @@ public class ProjectController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable UUID id) {
-        projectService.deleteProject(id);
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<Void> deleteProject(@PathVariable UUID projectId) {
+        projectService.deleteProject(projectId);
         return ResponseEntity.noContent().build();
     }
 }
