@@ -29,7 +29,7 @@ public class ProjectController {
     @GetMapping()
     public ResponseEntity<List<Project>> getProjectsByUser(@PathVariable UUID userId) {
         System.out.println("Controller getProjectsByUser");
-        return ResponseEntity.ok(projectService.getAllProjectsByUser(userId));
+        return ResponseEntity.ok(projectService.getAllProjectsByUserId(userId));
     }
 
     @GetMapping("/{projectId}")

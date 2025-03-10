@@ -46,7 +46,7 @@ public class ExpenseService {
         User user = userRepository.findById(expenseRequestDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + expenseRequestDTO.getUserId()));
 
-        Category category = categoryRepository.findById(expenseRequestDTO.getCategoryId())
+        Category category = categoryRepository.findByCategoryId(expenseRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + expenseRequestDTO.getCategoryId()));
 
         Expense expense = new Expense();
@@ -67,7 +67,7 @@ public class ExpenseService {
 
         System.out.println(expenseRequestDTO.getCategoryId());
 
-        Category category = categoryRepository.findById(expenseRequestDTO.getCategoryId())
+        Category category = categoryRepository.findByCategoryId(expenseRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + expenseRequestDTO.getCategoryId()));
 
         expense.setAmount(expenseRequestDTO.getAmount());
