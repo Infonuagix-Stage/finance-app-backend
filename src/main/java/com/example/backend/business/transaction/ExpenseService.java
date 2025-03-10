@@ -43,7 +43,7 @@ public class ExpenseService {
     }
 
     public ExpenseResponseDTO createExpense(ExpenseRequestDTO expenseRequestDTO) {
-        User user = userRepository.findById(expenseRequestDTO.getUserId())
+        User user = userRepository.findByUserId(expenseRequestDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + expenseRequestDTO.getUserId()));
 
         Category category = categoryRepository.findByCategoryId(expenseRequestDTO.getCategoryId())

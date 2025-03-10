@@ -62,7 +62,6 @@ public class IncomeService {
         return mapToResponseDTO(savedIncome);
     }
 
-
     // Met à jour une income existante
     public IncomeResponseDTO updateIncome(UUID id, IncomeRequestDTO incomeRequestDTO) {
         Income income = incomeRepository.findByIncomeId(id)
