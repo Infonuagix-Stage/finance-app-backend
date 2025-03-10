@@ -13,7 +13,6 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     // Find a category by ID and associated user ID
     Optional<Category> findByCategoryIdAndUser_UserId(UUID categoryId, UUID userId);
 
-    Optional<Category> findByCategoryId(UUID categoryId);
 
     //Optional<Object> findByUserIdAndName(UUID userId, String categoryName);
     List<Category> findByUser_UserId(UUID userId);
