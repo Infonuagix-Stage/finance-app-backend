@@ -45,9 +45,9 @@ public class IncomeService {
 
     // Crée une income à partir du DTO de requête
     public IncomeResponseDTO createIncome(IncomeRequestDTO incomeRequestDTO) {
-        User user = userRepository.findById(incomeRequestDTO.getUserId())
+        User user = userRepository.findByUserId(incomeRequestDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + incomeRequestDTO.getUserId()));
-        Category category = categoryRepository.findById(incomeRequestDTO.getCategoryId())
+        Category category = categoryRepository.findByCategoryId(incomeRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + incomeRequestDTO.getCategoryId()));
 
         Income income = new Income();
