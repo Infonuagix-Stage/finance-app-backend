@@ -44,11 +44,12 @@ public class IncomeService {
     }
 
     // Crée une income à partir du DTO de requête
-    public IncomeResponseDTO createIncome(IncomeRequestDTO incomeRequestDTO) {
-        User user = userRepository.findByUserId(incomeRequestDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + incomeRequestDTO.getUserId()));
-        Category category = categoryRepository.findByCategoryId(incomeRequestDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + incomeRequestDTO.getCategoryId()));
+    public IncomeResponseDTO createIncome(UUID userId, UUID categoryId, IncomeRequestDTO incomeRequestDTO) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        Category category = categoryRepository.findByCategoryId(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + categoryId));
 
         Income income = new Income();
         income.setAmount(incomeRequestDTO.getAmount());
@@ -65,7 +66,7 @@ public class IncomeService {
     public IncomeResponseDTO updateIncome(UUID id, IncomeRequestDTO incomeRequestDTO) {
         Income income = incomeRepository.findByIncomeId(id)
                 .orElseThrow(() -> new RuntimeException("Income not found with id " + id));
-        Category category = categoryRepository.findById(incomeRequestDTO.getCategoryId())
+        Category category = categoryRepository.findByCategoryId(incomeRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + incomeRequestDTO.getCategoryId()));
 
         income.setAmount(incomeRequestDTO.getAmount());
