@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -17,6 +20,22 @@ public class User {
     private String name;
     private String email;
     private String password;
+
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private List<String> roles = new ArrayList<>();
+
+
 
     @Column(name = "creation_date", updatable = false)
     @CreationTimestamp
@@ -74,6 +93,8 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 
     public LocalDateTime getCreationDate() {
         return creationDate;
