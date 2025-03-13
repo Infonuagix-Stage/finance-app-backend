@@ -7,6 +7,7 @@ import com.example.backend.dataaccess.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -60,5 +61,19 @@ public class UserService {
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         return dto;
+    }
+    // UserService.java
+    public User getOrCreateUserFromAuth0(String auth0UserId, String email, String name) {
+        Optional<User> existingUser = userRepository.findByAuth0UserId(auth0UserId);
+
+        if(existingUser.isPresent()) {
+            return existingUser.get();
+        }
+
+        User newUser = new User();
+        newUser.setAuth0UserId(auth0UserId);
+        newUser.setEmail(email);
+        newUser.setName(name);
+        return userRepository.save(newUser);
     }
 }

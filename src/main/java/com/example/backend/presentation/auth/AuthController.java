@@ -2,36 +2,34 @@ package com.example.backend.presentation.auth;
 
 import com.example.backend.dataaccess.user.User;
 import com.example.backend.business.auth.AuthService;
+import com.example.backend.dataaccess.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
-    private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        Map<String, Object> response = authService.register(user);
-        return ResponseEntity.ok(response);
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
-        String token = authService.login(loginRequest.get("email"), loginRequest.get("password"));
-        if (token == null) {
-            return ResponseEntity.badRequest().body("Invalid credentials");
-        }
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<User> loginOrRegister(@RequestBody AuthRequestDTO authRequest) {
+        User user = userRepository.findByAuth0UserId(authRequest.getAuth0UserId())
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setUserId(UUID.randomUUID());
+                    newUser.setName(authRequest.getName());
+                    newUser.setEmail(authRequest.getEmail());
+                    newUser.setAuth0UserId(authRequest.getAuth0UserId());
+                    return userRepository.save(newUser);
+                });
+        return ResponseEntity.ok(user);
     }
 }
+

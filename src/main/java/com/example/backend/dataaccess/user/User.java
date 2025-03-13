@@ -17,6 +17,9 @@ public class User {
     @Column(nullable = false, unique = true, updatable = false)
     private UUID userId; // UUID unique
 
+    @Column(unique = true)
+    private String auth0UserId;
+
     private String name;
     private String email;
     private String password;
@@ -53,11 +56,16 @@ public class User {
     public User() {
     }
 
-    public User(String name, String email, String password, UUID userId) {
+    public User(String auth0UserId, String name, String email, String password) {
+        this.auth0UserId = auth0UserId;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.userId = userId;
+    }
+
+    // getters et setters
+    public String getAuth0UserId() {
+        return auth0UserId;
     }
 
     // Getters and Setters
@@ -102,5 +110,9 @@ public class User {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public void setAuth0UserId(String auth0UserId) {
+        this.auth0UserId = auth0UserId;
     }
 }
