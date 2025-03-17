@@ -18,9 +18,6 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public List<Project> getAllProjectsByUserId(UUID userId) {
-        return projectRepository.findByUser_UserId(userId);
-    }
 
     public Optional<Project> getProjectById(UUID projectId) {
         return projectRepository.findProjectsByProjectId(projectId);
@@ -43,25 +40,14 @@ public class ProjectService {
     }
 
     public ProjectResponseDTO convertToResponseDTO(Project project) {
-        ProjectResponseDTO dto = new ProjectResponseDTO();
+        return null;
+    }
 
-        // Copier les valeurs depuis l'entité Project
-        dto.setProjectId(project.getProjectId());
-        dto.setName(project.getName());
-        dto.setTargetAmount(project.getTargetAmount());
-        dto.setSavedAmount(project.getSavedAmount());
-        dto.setDeadline(project.getDeadline());
-        dto.setPriority(project.getPriority());
-        dto.setMonthlyContribution(project.getMonthlyContribution());
-
-        // Pour l'ID utilisateur, on récupère l'ID via l'objet User
-        dto.setUserId(project.getUser() != null ? project.getUser().getUserId() : null);
-
-        // Date de création
-        dto.setCreatedAt(project.getCreatedAt());
-
-        return dto;
+    public void deleteByIdAndUserId(UUID projectId, UUID userId) {
     }
 
 
+    public List<Project> getAllProjectsByUser(UUID userId) {
+        return projectRepository.findByUser_UserId(userId);
+    }
 }
