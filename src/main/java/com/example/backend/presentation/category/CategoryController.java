@@ -105,6 +105,7 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
+
     /**
      * Création d'une catégorie de type EXPENSE pour l'utilisateur.
      */
@@ -126,25 +127,23 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    /**
-     * Création d'une catégorie de type INCOME pour l'utilisateur.
-     */
+
+    @PostMapping("/expense")
+    public ResponseEntity<CategoryResponseDTO> createExpenseCategory(
+            @PathVariable UUID userId,
+            @RequestBody CategoryRequestDTO requestDTO) {
+
+        CategoryResponseDTO createdCategory = categoryService.createExpenseCategory(userId, requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
+    }
+
     @PostMapping("/income")
     public ResponseEntity<CategoryResponseDTO> createIncomeCategory(
-            @PathVariable String auth0UserId,
-            @RequestBody CategoryRequestDTO requestDTO
-    ) {
-        User user = userRepository.findByAuth0UserId(auth0UserId)
-                .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
+            @PathVariable UUID userId,
+            @RequestBody CategoryRequestDTO requestDTO) {
 
-        // Forcer le type
-        requestDTO.setType(CategoryType.INCOME.name());
-
-        Category category = categoryService.convertToEntity(requestDTO, user);
-        Category savedCategory = categoryService.saveCategory(category);
-
-        CategoryResponseDTO responseDTO = categoryService.convertToDTO(savedCategory);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        CategoryResponseDTO createdCategory = categoryService.createIncomeCategory(userId, requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
     }
 
     /**
