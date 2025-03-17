@@ -18,9 +18,6 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public List<Project> getAllProjectsByUserId(UUID userId) {
-        return projectRepository.findByUser_UserId(userId);
-    }
 
     public Optional<Project> getProjectById(UUID projectId) {
         return projectRepository.findProjectsByProjectId(projectId);
@@ -50,4 +47,7 @@ public class ProjectService {
     }
 
 
+    public List<Project> getAllProjectsByUser(UUID userId) {
+        return projectRepository.findByUser_UserId(userId);
+    }
 }
