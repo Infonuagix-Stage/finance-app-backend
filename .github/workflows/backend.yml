@@ -16,6 +16,7 @@ jobs:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
     
     steps:
       - name: Checkout code
