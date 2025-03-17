@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users/{auth0UserId:.+}/categories")
@@ -31,8 +32,8 @@ public class CategoryController {
     ) {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
-        List<CategoryResponseDTO> categories = categoryService.getAllCategories(user.getUserId());
 
+        List<CategoryResponseDTO> categories = categoryService.getAllCategories(user.getUserId());
         return ResponseEntity.ok(categories);
     }
 
@@ -72,15 +73,11 @@ public class CategoryController {
             @PathVariable String auth0UserId,
             @PathVariable("categoryId") String categoryId
     ) {
-        // Récupération de l'utilisateur
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        // Conversion de l'ID (si c'est un UUID en base)
-        // NB: adaptez selon votre besoin si categoryId est un UUID
-        java.util.UUID catId = java.util.UUID.fromString(categoryId);
+        UUID catId = UUID.fromString(categoryId);
 
-        // Appel service
         CategoryResponseDTO categoryDTO = categoryService.getCategoryByIdForUser(user.getUserId(), catId);
         return ResponseEntity.ok(categoryDTO);
     }
@@ -96,11 +93,9 @@ public class CategoryController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        // Conversion du DTO -> Entité Category
         Category category = categoryService.convertToEntity(requestDTO, user);
         Category savedCategory = categoryService.saveCategory(category);
 
-        // Conversion entité -> DTO
         CategoryResponseDTO responseDTO = categoryService.convertToDTO(savedCategory);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
@@ -116,7 +111,7 @@ public class CategoryController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        // Forcer le type
+        // Forcer le type à EXPENSE
         requestDTO.setType(CategoryType.EXPENSE.name());
 
         Category category = categoryService.convertToEntity(requestDTO, user);
@@ -137,7 +132,7 @@ public class CategoryController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        // Forcer le type
+        // Forcer le type à INCOME
         requestDTO.setType(CategoryType.INCOME.name());
 
         Category category = categoryService.convertToEntity(requestDTO, user);
@@ -159,11 +154,9 @@ public class CategoryController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        java.util.UUID catId = java.util.UUID.fromString(categoryId);
+        UUID catId = UUID.fromString(categoryId);
 
-        CategoryResponseDTO updatedCategory =
-                categoryService.updateCategoryForUser(user.getUserId(), catId, categoryDetails);
-
+        CategoryResponseDTO updatedCategory = categoryService.updateCategoryForUser(user.getUserId(), catId, categoryDetails);
         return ResponseEntity.ok(updatedCategory);
     }
 
@@ -178,8 +171,7 @@ public class CategoryController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        java.util.UUID catId = java.util.UUID.fromString(categoryId);
-
+        UUID catId = UUID.fromString(categoryId);
         categoryService.deleteCategoryForUser(user.getUserId(), catId);
 
         return ResponseEntity.noContent().build();
