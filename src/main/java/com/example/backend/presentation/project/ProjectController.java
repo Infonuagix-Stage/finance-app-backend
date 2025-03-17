@@ -27,10 +27,10 @@ public class ProjectController {
     public ResponseEntity<List<Project>> getProjectsByUser(@PathVariable String auth0UserId) {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         System.out.println(auth0UserId);
         List<Project> projects = projectService.getAllProjectsByUser(user.getUserId());
         return ResponseEntity.ok(projects);
+
     }
 
     @GetMapping("/{projectId}")
