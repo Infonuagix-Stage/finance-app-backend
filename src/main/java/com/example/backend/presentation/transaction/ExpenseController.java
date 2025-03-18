@@ -19,9 +19,9 @@ public class ExpenseController {
 
     @GetMapping
     public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses(
-            @PathVariable("userId") UUID userId,
+            @PathVariable("userId") String auth0UserId,
             @PathVariable("categoryId") UUID categoryId) {
-        List<ExpenseResponseDTO> expenses = expenseService.getAllExpenses(userId, categoryId);
+        List<ExpenseResponseDTO> expenses = expenseService.getAllExpenses(auth0UserId, categoryId);
         return ResponseEntity.ok(expenses);
     }
 

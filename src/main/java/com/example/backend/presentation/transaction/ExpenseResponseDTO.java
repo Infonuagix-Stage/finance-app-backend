@@ -10,8 +10,8 @@ public class ExpenseResponseDTO {
     private BigDecimal montant;
     private LocalDate expenseDate;
     private String description;
-    private String categoryName; // Name of the associated category
-    private String userName;     // Name of the associated user
+    private String categoryName;
+    private String userName;
     private LocalDateTime creationDate;
 
     // Getters and Setters
@@ -71,7 +71,4 @@ public class ExpenseResponseDTO {
         this.creationDate = creationDate;
     }
 
-    public void setUserId(UUID userId) {
-
-    }
 }

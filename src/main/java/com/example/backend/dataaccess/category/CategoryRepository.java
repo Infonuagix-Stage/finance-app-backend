@@ -10,8 +10,13 @@ import java.util.UUID;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    Optional<Category> findByCategoryIdAndUser_UserId(UUID categoryId, UUID userId);
+
+    Optional<Category> findByCategoryIdAndUser_Auth0UserId(UUID categoryId, String auth0UserId);
+
     Optional<Category> findByCategoryId(UUID categoryId);
-    List<Category> findByUser_UserId(UUID userId);
-    List<Category> findByUser_UserIdAndType(UUID userId, CategoryType type);
+
+    List<Category> findByUser_Auth0UserId(String auth0UserId);
+
+    List<Category> findByUser_Auth0UserIdAndType(String auth0UserId, CategoryType type);
 }
+

@@ -23,10 +23,9 @@ public class AuthController {
         User user = userRepository.findByAuth0UserId(authRequest.getAuth0UserId())
                 .orElseGet(() -> {
                     User newUser = new User();
-                    newUser.setUserId(UUID.randomUUID());
+                    newUser.setAuth0UserId(authRequest.getAuth0UserId());
                     newUser.setName(authRequest.getName());
                     newUser.setEmail(authRequest.getEmail());
-                    newUser.setAuth0UserId(authRequest.getAuth0UserId());
                     return userRepository.save(newUser);
                 });
         return ResponseEntity.ok(user);

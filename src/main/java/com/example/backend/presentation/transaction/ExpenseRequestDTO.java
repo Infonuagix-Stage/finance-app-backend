@@ -8,8 +8,8 @@ public class ExpenseRequestDTO {
     private BigDecimal amount;
     private LocalDate expenseDate;
     private String description;
-    private UUID categoryId; // ID of the associated category
-    private UUID userId;     // ID of the associated user
+    private UUID categoryId;
+    private String auth0UserId;
 
     // Getters and Setters
     public BigDecimal getAmount() {
@@ -44,11 +44,11 @@ public class ExpenseRequestDTO {
         this.categoryId = categoryId;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public String getAuth0UserId() {
+        return auth0UserId;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setAuth0UserId(String auth0UserId) {
+        this.auth0UserId = auth0UserId;
     }
 }

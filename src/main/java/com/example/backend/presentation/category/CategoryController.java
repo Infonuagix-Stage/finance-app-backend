@@ -33,7 +33,7 @@ public class CategoryController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        List<CategoryResponseDTO> categories = categoryService.getAllCategories(user.getUserId());
+        List<CategoryResponseDTO> categories = categoryService.getAllCategories(user.getAuth0UserId());
         return ResponseEntity.ok(categories);
     }
 
@@ -47,7 +47,7 @@ public class CategoryController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        List<CategoryResponseDTO> expenses = categoryService.getExpenseCategories(user.getUserId());
+        List<CategoryResponseDTO> expenses = categoryService.getExpenseCategories(user.getAuth0UserId());
         return ResponseEntity.ok(expenses);
     }
 
@@ -61,7 +61,7 @@ public class CategoryController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        List<CategoryResponseDTO> incomes = categoryService.getIncomeCategories(user.getUserId());
+        List<CategoryResponseDTO> incomes = categoryService.getIncomeCategories(user.getAuth0UserId());
         return ResponseEntity.ok(incomes);
     }
 
@@ -78,7 +78,7 @@ public class CategoryController {
 
         UUID catId = UUID.fromString(categoryId);
 
-        CategoryResponseDTO categoryDTO = categoryService.getCategoryByIdForUser(user.getUserId(), catId);
+        CategoryResponseDTO categoryDTO = categoryService.getCategoryByIdForUser(user.getAuth0UserId(), catId);
         return ResponseEntity.ok(categoryDTO);
     }
 
@@ -156,7 +156,7 @@ public class CategoryController {
 
         UUID catId = UUID.fromString(categoryId);
 
-        CategoryResponseDTO updatedCategory = categoryService.updateCategoryForUser(user.getUserId(), catId, categoryDetails);
+        CategoryResponseDTO updatedCategory = categoryService.updateCategoryForUser(user.getAuth0UserId(), catId, categoryDetails);
         return ResponseEntity.ok(updatedCategory);
     }
 
@@ -172,7 +172,7 @@ public class CategoryController {
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
         UUID catId = UUID.fromString(categoryId);
-        categoryService.deleteCategoryForUser(user.getUserId(), catId);
+        categoryService.deleteCategoryForUser(user.getAuth0UserId(), catId);
 
         return ResponseEntity.noContent().build();
     }

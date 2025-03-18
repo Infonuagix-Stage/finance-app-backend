@@ -27,10 +27,8 @@ public class ExpenseService {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
     }
-
-    // Nouvelle méthode pour récupérer les dépenses d'un utilisateur dans une catégorie donnée
-    public List<ExpenseResponseDTO> getAllExpenses(UUID userId, UUID categoryId) {
-        return expenseRepository.findByUser_UserIdAndCategory_CategoryId(userId, categoryId)
+    public List<ExpenseResponseDTO> getAllExpenses(String auth0UserId, UUID categoryId) {
+        return expenseRepository.findByUser_Auth0UserIdAndCategory_CategoryId(auth0UserId, categoryId)
                 .stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
@@ -43,8 +41,8 @@ public class ExpenseService {
     }
 
     public ExpenseResponseDTO createExpense(ExpenseRequestDTO expenseRequestDTO) {
-        User user = userRepository.findByUserId(expenseRequestDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + expenseRequestDTO.getUserId()));
+        User user = userRepository.findByAuth0UserId(expenseRequestDTO.getAuth0UserId())
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + expenseRequestDTO.getAuth0UserId()));
 
         Category category = categoryRepository.findByCategoryId(expenseRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + expenseRequestDTO.getCategoryId()));
@@ -59,7 +57,6 @@ public class ExpenseService {
         Expense savedExpense = expenseRepository.save(expense);
         return mapToResponseDTO(savedExpense);
     }
-
     public ExpenseResponseDTO updateExpense(UUID id, ExpenseRequestDTO expenseRequestDTO) {
         System.out.println("ID reçu dans le service : " + id);
         Expense expense = expenseRepository.findById(id)
@@ -98,8 +95,8 @@ public class ExpenseService {
     }
 
 
-    public BigDecimal getTotalForCategory(UUID userId, UUID categoryId) {
-        return expenseRepository.getTotalForCategory(userId, categoryId);
+    public BigDecimal getTotalForCategory(String auth0UserId, UUID categoryId) {
+        return expenseRepository.getTotalForCategory(auth0UserId, categoryId);
     }
 
 

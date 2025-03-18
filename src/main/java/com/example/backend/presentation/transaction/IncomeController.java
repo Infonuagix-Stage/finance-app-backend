@@ -20,9 +20,9 @@ public class IncomeController {
     // GET : Récupérer toutes les incomes pour un utilisateur dans une catégorie donnée
     @GetMapping
     public ResponseEntity<List<IncomeResponseDTO>> getAllIncomes(
-            @PathVariable("userId") UUID userId,
+            @PathVariable("userId") String auth0UserId,
             @PathVariable("categoryId") UUID categoryId) {
-        List<IncomeResponseDTO> incomes = incomeService.getAllIncomes(userId, categoryId);
+        List<IncomeResponseDTO> incomes = incomeService.getAllIncomes(auth0UserId, categoryId);
         return ResponseEntity.ok(incomes);
     }
 
@@ -36,7 +36,7 @@ public class IncomeController {
     // POST : Créer une nouvelle income
     @PostMapping
     public ResponseEntity<IncomeResponseDTO> createIncome(
-            @PathVariable("userId") UUID userId,
+            @PathVariable("userId") String userId,
             @PathVariable("categoryId") UUID categoryId,
             @RequestBody IncomeRequestDTO incomeRequestDTO
     ) {

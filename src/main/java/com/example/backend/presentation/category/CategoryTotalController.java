@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/users/{userId}/categories/{categoryId}")
+@RequestMapping("/api/v1/users/{auth0UserId:.+}/categories/{categoryId}")
 public class CategoryTotalController {
 
     @Autowired
@@ -22,14 +22,14 @@ public class CategoryTotalController {
 
     @GetMapping("/total")
     public ResponseEntity<BigDecimal> getTotalForCategory(
-            @PathVariable UUID userId,
+            @PathVariable String auth0UserId,
             @PathVariable UUID categoryId,
             @RequestParam String type) {
         BigDecimal total;
         if ("INCOME".equalsIgnoreCase(type)) {
-            total = incomeService.getTotalForCategory(userId, categoryId);
+            total = incomeService.getTotalForCategory(auth0UserId, categoryId);
         } else if ("EXPENSE".equalsIgnoreCase(type)) {
-            total = expenseService.getTotalForCategory(userId, categoryId);
+            total = expenseService.getTotalForCategory(auth0UserId, categoryId);
         } else {
             total = BigDecimal.ZERO;
         }

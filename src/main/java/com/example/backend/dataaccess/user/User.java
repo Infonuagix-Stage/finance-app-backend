@@ -14,8 +14,9 @@ import java.util.UUID;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true, updatable = false)
-    private UUID userId; // UUID unique
+    private Long id;
 
     @Column(unique = true)
     private String auth0UserId;
@@ -44,13 +45,6 @@ public class User {
     @CreationTimestamp
     private LocalDateTime creationDate;
 
-    // ⚠ Génération automatique de `userId` avant insertion
-    @PrePersist
-    public void generateUserId() {
-        if (this.userId == null) {
-            this.userId = UUID.randomUUID();
-        }
-    }
 
     // Constructeurs
     public User() {
@@ -63,21 +57,8 @@ public class User {
         this.password = password;
     }
 
-    // getters et setters
-    public String getAuth0UserId() {
-        return auth0UserId;
-    }
 
     // Getters and Setters
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
     public String getName() {
         return name;
     }
@@ -102,8 +83,6 @@ public class User {
         this.password = password;
     }
 
-
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -114,5 +93,8 @@ public class User {
 
     public void setAuth0UserId(String auth0UserId) {
         this.auth0UserId = auth0UserId;
+    }
+    public String getAuth0UserId() {
+        return auth0UserId;
     }
 }

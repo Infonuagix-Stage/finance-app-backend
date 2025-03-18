@@ -20,7 +20,7 @@ public class Project {
     private UUID projectId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "auth0UserId", nullable = false)
     private User user;
 
 

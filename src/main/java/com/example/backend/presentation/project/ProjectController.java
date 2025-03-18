@@ -28,7 +28,7 @@ public class ProjectController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         System.out.println(auth0UserId);
-        List<Project> projects = projectService.getAllProjectsByUser(user.getUserId());
+        List<Project> projects = projectService.getAllProjectsByUser(user.getAuth0UserId());
         return ResponseEntity.ok(projects);
 
     }
@@ -71,7 +71,7 @@ public class ProjectController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Optional<Project> projectOptional = projectService.findByIdAndUserId(projectId, user.getUserId());
+        Optional<Project> projectOptional = projectService.findByIdAndUserId(projectId, user.getAuth0UserId());
         if (projectOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -97,7 +97,7 @@ public class ProjectController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        projectService.deleteByIdAndUserId(projectId, user.getUserId());
+        projectService.deleteByIdAndUserId(projectId, user.getAuth0UserId());
 
         return ResponseEntity.noContent().build();
     }
@@ -111,7 +111,7 @@ public class ProjectController {
         dto.setDeadline(project.getDeadline());
         dto.setPriority(project.getPriority());
         dto.setMonthlyContribution(project.getMonthlyContribution());
-        dto.setUserId(project.getUser().getUserId());
+        dto.setAuth0UserId(project.getUser().getAuth0UserId());
         dto.setCreatedAt(project.getCreatedAt());
         return dto;
     }

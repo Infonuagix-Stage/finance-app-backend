@@ -10,8 +10,8 @@ public class IncomeResponseDTO {
     private BigDecimal amount;
     private LocalDate incomeDate;
     private String description;
-    private String categoryName; // Nom de la catégorie associée
-    private String userName;     // Nom de l'utilisateur associé
+    private String categoryName;
+    private String userName;
     private LocalDateTime creationDate;
 
     // Getters et Setters
