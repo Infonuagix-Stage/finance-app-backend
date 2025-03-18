@@ -40,11 +40,11 @@ public class ExpenseService {
         return mapToResponseDTO(expense);
     }
 
-    public ExpenseResponseDTO createExpense(ExpenseRequestDTO expenseRequestDTO) {
-        User user = userRepository.findByAuth0UserId(expenseRequestDTO.getAuth0UserId())
+    public ExpenseResponseDTO createExpense(String auth0UserId, UUID categoryId , ExpenseRequestDTO expenseRequestDTO) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + expenseRequestDTO.getAuth0UserId()));
 
-        Category category = categoryRepository.findByCategoryId(expenseRequestDTO.getCategoryId())
+        Category category = categoryRepository.findByCategoryId(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + expenseRequestDTO.getCategoryId()));
 
         Expense expense = new Expense();

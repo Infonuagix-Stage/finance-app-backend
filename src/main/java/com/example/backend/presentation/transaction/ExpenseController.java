@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/users/{userId}/categories/{categoryId}/expenses")
+@RequestMapping("/api/v1/users/{auth0UserId:.+}/categories/{categoryId}/expenses")
 public class ExpenseController {
 
     private final ExpenseService expenseService;
@@ -19,7 +19,7 @@ public class ExpenseController {
 
     @GetMapping
     public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses(
-            @PathVariable("userId") String auth0UserId,
+            @PathVariable("auth0UserId") String auth0UserId,
             @PathVariable("categoryId") UUID categoryId) {
         List<ExpenseResponseDTO> expenses = expenseService.getAllExpenses(auth0UserId, categoryId);
         return ResponseEntity.ok(expenses);
@@ -32,8 +32,12 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public ResponseEntity<ExpenseResponseDTO> createExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO) {
-        ExpenseResponseDTO createdExpense = expenseService.createExpense(expenseRequestDTO);
+    public ResponseEntity<ExpenseResponseDTO> createExpense(
+            @PathVariable("auth0UserId") String auth0UserId,
+            @PathVariable("categoryId") UUID categoryId,
+            @RequestBody ExpenseRequestDTO expenseRequestDTO
+    ) {
+        ExpenseResponseDTO createdExpense = expenseService.createExpense(auth0UserId, categoryId, expenseRequestDTO);
         return ResponseEntity.ok(createdExpense);
     }
 
