@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class ExpenseResponseDTO {
     private UUID expenseId;
-    private BigDecimal montant;
+    private BigDecimal amount;
     private LocalDate expenseDate;
     private String description;
     private String categoryName;
@@ -23,12 +23,12 @@ public class ExpenseResponseDTO {
         this.expenseId = expenseId;
     }
 
-    public BigDecimal getMontant() {
-        return montant;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setMontant(BigDecimal montant) {
-        this.montant = montant;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public LocalDate getExpenseDate() {
