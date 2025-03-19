@@ -13,10 +13,11 @@ import java.util.UUID;
 @Repository
 public interface IncomeRepository extends JpaRepository<Income, UUID> {
 
-    @Query("SELECT COALESCE(SUM(i.amount), 0) FROM Income i WHERE i.user.userId = :userId AND i.category.categoryId = :categoryId")
-    BigDecimal getTotalForCategory(@Param("userId") UUID userId, @Param("categoryId") UUID categoryId);
+    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Income e WHERE e.user.auth0UserId = :auth0UserId AND e.category.categoryId = :categoryId")
+    BigDecimal getTotalForCategory(@Param("auth0UserId") String auth0UserId,
+                                   @Param("categoryId") UUID categoryId);
 
-    List<Income> findByUser_UserIdAndCategory_CategoryId(UUID userId, UUID categoryId);
+    List<Income> findByUser_Auth0UserIdAndCategory_CategoryId(String auth0UserId, UUID categoryId);
 
     Optional<Income> findByIncomeId(UUID incomeId);
 }

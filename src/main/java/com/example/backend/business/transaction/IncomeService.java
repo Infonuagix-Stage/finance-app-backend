@@ -28,25 +28,22 @@ public class IncomeService {
         this.categoryRepository = categoryRepository;
     }
 
-    // Récupère toutes les incomes pour un utilisateur dans une catégorie donnée
-    public List<IncomeResponseDTO> getAllIncomes(UUID userId, UUID categoryId) {
-        List<Income> incomes = incomeRepository.findByUser_UserIdAndCategory_CategoryId(userId, categoryId);
+    public List<IncomeResponseDTO> getAllIncomes(String auth0UserId, UUID categoryId) {
+        List<Income> incomes = incomeRepository.findByUser_Auth0UserIdAndCategory_CategoryId(auth0UserId, categoryId);
         return incomes.stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    // Récupère une income par son ID
     public IncomeResponseDTO getIncomeById(UUID incomeId) {
         Income income = incomeRepository.findByIncomeId(incomeId)
                 .orElseThrow(() -> new RuntimeException("Income not found with id " + incomeId));
         return mapToResponseDTO(income);
     }
 
-    // Crée une income à partir du DTO de requête
-    public IncomeResponseDTO createIncome(UUID userId, UUID categoryId, IncomeRequestDTO incomeRequestDTO) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+    public IncomeResponseDTO createIncome(String auth0UserId, UUID categoryId, IncomeRequestDTO incomeRequestDTO) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + auth0UserId));
 
         Category category = categoryRepository.findByCategoryId(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + categoryId));
@@ -62,7 +59,6 @@ public class IncomeService {
         return mapToResponseDTO(savedIncome);
     }
 
-    // Met à jour une income existante
     public IncomeResponseDTO updateIncome(UUID id, IncomeRequestDTO incomeRequestDTO) {
         Income income = incomeRepository.findByIncomeId(id)
                 .orElseThrow(() -> new RuntimeException("Income not found with id " + id));
@@ -78,19 +74,16 @@ public class IncomeService {
         return mapToResponseDTO(updatedIncome);
     }
 
-    // Supprime une income par ID
     public void deleteIncome(UUID id) {
         Income income = incomeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Income not found with id " + id));
         incomeRepository.delete(income);
     }
 
-    // Calcule le total des incomes pour une catégorie donnée d'un utilisateur
-    public BigDecimal getTotalForCategory(UUID userId, UUID categoryId) {
-        return incomeRepository.getTotalForCategory(userId, categoryId);
+    public BigDecimal getTotalForCategory(String auth0UserId, UUID categoryId) {
+        return incomeRepository.getTotalForCategory(auth0UserId, categoryId);
     }
 
-    // Méthode privée pour mapper une entité Income en IncomeResponseDTO
     private IncomeResponseDTO mapToResponseDTO(Income income) {
         IncomeResponseDTO dto = new IncomeResponseDTO();
         dto.setIncomeId(income.getIncomeId());

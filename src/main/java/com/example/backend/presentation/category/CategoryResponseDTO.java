@@ -3,27 +3,24 @@ package com.example.backend.presentation.category;
 import java.util.UUID;
 
 public class CategoryResponseDTO {
-    private UUID categoryId;  // Utilisation d'UUID au lieu de Long
+    private UUID categoryId;
     private String name;
     private String description;
     private String creationDate;
-    private String type;  // Utilisé comme String pour JSON
-    private UUID userId;  // Utilisation d'UUID au lieu de Long
+    private String type;
+    private String auth0UserId;
 
     public CategoryResponseDTO() {
     }
-
-    // Constructeur avec paramètres
-    public CategoryResponseDTO(UUID categoryId, String name, String description, String creationDate, String type, UUID userId) {
+    public CategoryResponseDTO(UUID categoryId, String name, String description, String creationDate, String type, String auth0UserId) {
         this.categoryId = categoryId;
         this.name = name;
         this.description = description;
         this.creationDate = creationDate;
         this.type = type;
-        this.userId = userId;
+        this.auth0UserId = auth0UserId;
     }
 
-    // Getters and setters
     public UUID getCategoryId() {
         return categoryId;
     }
@@ -54,10 +51,10 @@ public class CategoryResponseDTO {
     public void setType(String type) {
         this.type = type;
     }
-    public UUID getUserId() {
-        return userId;
+    public String getAuth0UserId() {
+        return auth0UserId;
     }
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setAuth0UserId(String auth0UserId) {
+        this.auth0UserId = auth0UserId;
     }
 }

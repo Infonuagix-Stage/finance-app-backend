@@ -12,10 +12,11 @@ import java.util.*;
 public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
 
 
-    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.userId = :userId AND e.category.categoryId = :categoryId")
-    BigDecimal getTotalForCategory(@Param("userId") UUID userId, @Param("categoryId") UUID categoryId);
+    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.auth0UserId = :auth0UserId AND e.category.categoryId = :categoryId")
+    BigDecimal getTotalForCategory(@Param("auth0UserId") String auth0UserId,
+                                   @Param("categoryId") UUID categoryId);
 
-    List<Expense> findByUser_UserIdAndCategory_CategoryId(UUID userId, UUID categoryId);
+    List<Expense> findByUser_Auth0UserIdAndCategory_CategoryId(String auth0UserId , UUID categoryId);
 
 
 }

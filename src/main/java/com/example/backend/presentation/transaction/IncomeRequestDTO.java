@@ -8,8 +8,8 @@ public class IncomeRequestDTO {
     private BigDecimal amount;
     private LocalDate incomeDate;
     private String description;
-    private UUID categoryId; // ID de la catégorie associée
-    private UUID userId;     // ID de l'utilisateur associé
+    private UUID categoryId;
+    private String auth0UserId;
 
     // Getters et Setters
     public BigDecimal getAmount() {
@@ -36,10 +36,10 @@ public class IncomeRequestDTO {
     public void setCategoryId(UUID categoryId) {
         this.categoryId = categoryId;
     }
-    public UUID getUserId() {
-        return userId;
+    public String getAuth0UserId() {
+        return auth0UserId;
     }
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setAuth0UserId(String auth0UserId) {
+        this.auth0UserId = auth0UserId;
     }
 }
