@@ -14,6 +14,9 @@ public class ExpenseResponseDTO {
     private String userName;
     private LocalDateTime creationDate;
 
+    public ExpenseResponseDTO() {
+    }
+
     // Getters and Setters
     public UUID getExpenseId() {
         return expenseId;

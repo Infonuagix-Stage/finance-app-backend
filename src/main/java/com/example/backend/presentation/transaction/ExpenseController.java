@@ -25,9 +25,9 @@ public class ExpenseController {
         return ResponseEntity.ok(expenses);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ExpenseResponseDTO> getExpenseById(@PathVariable UUID id) {
-        ExpenseResponseDTO expense = expenseService.getExpenseById(id);
+    @GetMapping("/{expenseId}")
+    public ResponseEntity<ExpenseResponseDTO> getExpenseById(@PathVariable UUID expenseId) {
+        ExpenseResponseDTO expense = expenseService.getExpenseById(expenseId);
         return ResponseEntity.ok(expense);
     }
 
@@ -41,20 +41,21 @@ public class ExpenseController {
         return ResponseEntity.ok(createdExpense);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{expenseId}")
     public ResponseEntity<ExpenseResponseDTO> updateExpense(
-            @PathVariable UUID id,
+            @PathVariable("auth0UserId") String auth0UserId,
+            @PathVariable("categoryId") UUID categoryId,
+            @PathVariable("expenseId") String expenseIdStr,
             @RequestBody ExpenseRequestDTO expenseRequestDTO
     ) {
-        System.out.println(expenseRequestDTO.getAmount());
-        System.out.println("ID reçu : " + id);
-        ExpenseResponseDTO updatedExpense = expenseService.updateExpense(id, expenseRequestDTO);
+        UUID expenseId = UUID.fromString(expenseIdStr);
+        ExpenseResponseDTO updatedExpense = expenseService.updateExpense(auth0UserId, categoryId, expenseId, expenseRequestDTO);
         return ResponseEntity.ok(updatedExpense);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteExpense(@PathVariable UUID id) {
-        expenseService.deleteExpense(id);
+    @DeleteMapping("/{expenseId}")
+    public ResponseEntity<Void> deleteExpense(@PathVariable UUID expenseId) {
+        expenseService.deleteExpense(expenseId);
         return ResponseEntity.noContent().build();
     }
 }

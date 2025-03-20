@@ -35,9 +35,9 @@ public class IncomeService {
                 .collect(Collectors.toList());
     }
 
-    public IncomeResponseDTO getIncomeById(UUID incomeId) {
+    public IncomeResponseDTO getIncomeByIncomeId(String auth0UserId, UUID categoryId, UUID incomeId) {
         Income income = incomeRepository.findByIncomeId(incomeId)
-                .orElseThrow(() -> new RuntimeException("Income not found with id " + incomeId));
+                .orElseThrow(() -> new RuntimeException("Income not found for incomeId: " + incomeId));
         return mapToResponseDTO(income);
     }
 
@@ -59,9 +59,9 @@ public class IncomeService {
         return mapToResponseDTO(savedIncome);
     }
 
-    public IncomeResponseDTO updateIncome(UUID id, IncomeRequestDTO incomeRequestDTO) {
-        Income income = incomeRepository.findByIncomeId(id)
-                .orElseThrow(() -> new RuntimeException("Income not found with id " + id));
+    public IncomeResponseDTO updateIncome(String auth0UserId, UUID categoryId, UUID incomeId, IncomeRequestDTO incomeRequestDTO) {
+        Income income = incomeRepository.findByIncomeId(incomeId)
+                .orElseThrow(() -> new RuntimeException("Income not found with id " + incomeId));
         Category category = categoryRepository.findByCategoryId(incomeRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + incomeRequestDTO.getCategoryId()));
 
@@ -74,9 +74,9 @@ public class IncomeService {
         return mapToResponseDTO(updatedIncome);
     }
 
-    public void deleteIncome(UUID id) {
-        Income income = incomeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Income not found with id " + id));
+    public void deleteIncome(UUID incomeId) {
+        Income income = incomeRepository.findByIncomeId(incomeId)
+                .orElseThrow(() -> new RuntimeException("Income not found with id " + incomeId));
         incomeRepository.delete(income);
     }
 

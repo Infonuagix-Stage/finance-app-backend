@@ -19,5 +19,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
     List<Expense> findByUser_Auth0UserIdAndCategory_CategoryId(String auth0UserId , UUID categoryId);
 
 
+    Optional<Expense> findByExpenseId(UUID expenseId);
+
 }
 
