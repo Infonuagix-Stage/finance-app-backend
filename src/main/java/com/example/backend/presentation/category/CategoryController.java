@@ -23,9 +23,6 @@ public class CategoryController {
     @Autowired
     private UserRepository userRepository;
 
-    /**
-     * Récupérer toutes les catégories d'un utilisateur donné (via auth0UserId).
-     */
     @GetMapping
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(
             @PathVariable String auth0UserId
@@ -36,10 +33,6 @@ public class CategoryController {
         List<CategoryResponseDTO> categories = categoryService.getAllCategories(user.getAuth0UserId());
         return ResponseEntity.ok(categories);
     }
-
-    /**
-     * Récupérer les catégories de type EXPENSE d'un utilisateur.
-     */
     @GetMapping("/expense")
     public ResponseEntity<List<CategoryResponseDTO>> getExpenseCategories(
             @PathVariable String auth0UserId
@@ -50,10 +43,6 @@ public class CategoryController {
         List<CategoryResponseDTO> expenses = categoryService.getExpenseCategories(user.getAuth0UserId());
         return ResponseEntity.ok(expenses);
     }
-
-    /**
-     * Récupérer les catégories de type INCOME d'un utilisateur.
-     */
     @GetMapping("/income")
     public ResponseEntity<List<CategoryResponseDTO>> getIncomeCategories(
             @PathVariable String auth0UserId
@@ -64,10 +53,6 @@ public class CategoryController {
         List<CategoryResponseDTO> incomes = categoryService.getIncomeCategories(user.getAuth0UserId());
         return ResponseEntity.ok(incomes);
     }
-
-    /**
-     * Récupérer une catégorie spécifique par son ID (propre à la base) pour l'utilisateur donné.
-     */
     @GetMapping("/{categoryId}")
     public ResponseEntity<CategoryResponseDTO> getCategoryById(
             @PathVariable String auth0UserId,
@@ -82,9 +67,6 @@ public class CategoryController {
         return ResponseEntity.ok(categoryDTO);
     }
 
-    /**
-     * Création d'une catégorie (type quelconque) pour l'utilisateur.
-     */
     @PostMapping
     public ResponseEntity<CategoryResponseDTO> createCategory(
             @PathVariable String auth0UserId,
@@ -100,9 +82,6 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    /**
-     * Création d'une catégorie de type EXPENSE pour l'utilisateur.
-     */
     @PostMapping("/expense")
     public ResponseEntity<CategoryResponseDTO> createExpenseCategory(
             @PathVariable String auth0UserId,
@@ -121,9 +100,6 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    /**
-     * Création d'une catégorie de type INCOME pour l'utilisateur.
-     */
     @PostMapping("/income")
     public ResponseEntity<CategoryResponseDTO> createIncomeCategory(
             @PathVariable String auth0UserId,
@@ -132,7 +108,6 @@ public class CategoryController {
         User user = userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        // Forcer le type à INCOME
         requestDTO.setType(CategoryType.INCOME.name());
 
         Category category = categoryService.convertToEntity(requestDTO, user);
@@ -142,9 +117,6 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    /**
-     * Mise à jour d'une catégorie pour l'utilisateur (à partir de son ID).
-     */
     @PutMapping("/{categoryId}")
     public ResponseEntity<CategoryResponseDTO> updateCategory(
             @PathVariable String auth0UserId,
@@ -160,9 +132,6 @@ public class CategoryController {
         return ResponseEntity.ok(updatedCategory);
     }
 
-    /**
-     * Suppression d'une catégorie pour l'utilisateur (à partir de son ID).
-     */
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Void> deleteCategory(
             @PathVariable String auth0UserId,

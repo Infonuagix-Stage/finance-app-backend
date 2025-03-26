@@ -18,12 +18,23 @@ public class ExpenseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses(
+    public ResponseEntity<List<ExpenseResponseDTO>> getExpenses(
             @PathVariable("auth0UserId") String auth0UserId,
-            @PathVariable("categoryId") UUID categoryId) {
-        List<ExpenseResponseDTO> expenses = expenseService.getAllExpenses(auth0UserId, categoryId);
+            @PathVariable("categoryId") UUID categoryId,
+            @RequestParam("year") int year,
+            @RequestParam("month") int month
+    ) {
+        List<ExpenseResponseDTO> expenses = expenseService.getMonthlyExpenses(auth0UserId, year, month, categoryId);
         return ResponseEntity.ok(expenses);
     }
+
+//    @GetMapping
+//    public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses(
+//            @PathVariable("auth0UserId") String auth0UserId,
+//            @PathVariable("categoryId") UUID categoryId) {
+//        List<ExpenseResponseDTO> expenses = expenseService.getAllExpenses(auth0UserId, categoryId);
+//        return ResponseEntity.ok(expenses);
+//    }
 
     @GetMapping("/{expenseId}")
     public ResponseEntity<ExpenseResponseDTO> getExpenseById(@PathVariable UUID expenseId) {

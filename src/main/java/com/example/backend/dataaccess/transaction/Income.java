@@ -47,61 +47,82 @@ public class Income {
             this.incomeId = UUID.randomUUID();
         }
     }
+
     public Income() {
     }
-    public Income(BigDecimal amount, LocalDate incomeDate, String description, Category category, User user) {
+
+    public Income(BigDecimal amount, LocalDate incomeDate, String description,
+                  Category category, User user) {
         this.amount = amount;
         this.incomeDate = incomeDate;
         this.description = description;
         this.category = category;
         this.user = user;
     }
-    // Getters et Setters
+
+    // Getters / Setters
+
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
+
     public UUID getIncomeId() {
         return incomeId;
     }
-    public void setId(UUID incomeId) {
+
+    public void setIncomeId(UUID incomeId) {
         this.incomeId = incomeId;
     }
+
     public BigDecimal getAmount() {
         return amount;
     }
+
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+
     public LocalDate getIncomeDate() {
         return incomeDate;
     }
+
     public void setIncomeDate(LocalDate incomeDate) {
         this.incomeDate = incomeDate;
     }
+
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
+
     public Category getCategory() {
         return category;
     }
+
     public void setCategory(Category category) {
         this.category = category;
     }
+
     public User getUser() {
         return user;
     }
+
     public void setUser(User user) {
         this.user = user;
     }
+
+
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
+
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }

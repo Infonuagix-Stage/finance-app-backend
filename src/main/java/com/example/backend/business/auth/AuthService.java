@@ -55,6 +55,7 @@ public class AuthService {
         User savedUser = userRepository.save(user);
 
         String token = generateToken(savedUser);
+        System.out.println(token);
 
         Map<String, Object> response = new HashMap<>();
        // response.put("userId", savedUser.getAuth0UserId()); // UUID de l'utilisateur
@@ -85,6 +86,7 @@ public class AuthService {
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expire après 1 heure
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
+
     }
 
 }

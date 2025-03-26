@@ -18,12 +18,23 @@ public class IncomeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<IncomeResponseDTO>> getAllIncomes(
+    public ResponseEntity<List<IncomeResponseDTO>> getMonthlyIncomes(
             @PathVariable("auth0UserId") String auth0UserId,
-            @PathVariable("categoryId") UUID categoryId) {
-        List<IncomeResponseDTO> incomes = incomeService.getAllIncomes(auth0UserId, categoryId);
+            @PathVariable("categoryId") UUID categoryId,
+            @RequestParam("year") int year,
+            @RequestParam("month") int month
+    ) {
+        List<IncomeResponseDTO> incomes = incomeService.getMonthlyIncomes(auth0UserId, year, month, categoryId);
         return ResponseEntity.ok(incomes);
     }
+
+//    @GetMapping
+//    public ResponseEntity<List<IncomeResponseDTO>> getAllIncomes(
+//            @PathVariable("auth0UserId") String auth0UserId,
+//            @PathVariable("categoryId") UUID categoryId) {
+//        List<IncomeResponseDTO> incomes = incomeService.getAllIncomes(auth0UserId, categoryId);
+//        return ResponseEntity.ok(incomes);
+//    }
 
     @GetMapping("/{incomeId}")
     public ResponseEntity<IncomeResponseDTO> getIncomeByIncomeId(

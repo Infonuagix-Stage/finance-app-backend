@@ -40,6 +40,7 @@ public class Expense {
     @CreationTimestamp
     private LocalDateTime creationDate;
 
+
     @PrePersist
     public void prePersist() {
         if (this.expenseId == null) {

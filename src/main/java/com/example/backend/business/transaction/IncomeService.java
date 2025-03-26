@@ -28,6 +28,18 @@ public class IncomeService {
         this.categoryRepository = categoryRepository;
     }
 
+    public List<IncomeResponseDTO> getMonthlyIncomes(String auth0UserId, int year, int month, UUID categoryId) {
+        List<Income> incomes;
+
+        if (categoryId != null) {
+            incomes = incomeRepository.findByUserYearMonthAndCategory(auth0UserId, year, month, categoryId);
+        } else {
+            incomes = incomeRepository.findByUserYearAndMonth(auth0UserId, year, month);
+        }
+
+        return incomes.stream().map(this::mapToResponseDTO).collect(Collectors.toList());
+    }
+
     public List<IncomeResponseDTO> getAllIncomes(String auth0UserId, UUID categoryId) {
         List<Income> incomes = incomeRepository.findByUser_Auth0UserIdAndCategory_CategoryId(auth0UserId, categoryId);
         return incomes.stream()
@@ -80,8 +92,12 @@ public class IncomeService {
         incomeRepository.delete(income);
     }
 
-    public BigDecimal getTotalForCategory(String auth0UserId, UUID categoryId) {
-        return incomeRepository.getTotalForCategory(auth0UserId, categoryId);
+    public BigDecimal getTotalForCategory(String auth0UserId, UUID categoryId, Integer year, Integer month) {
+        if (year == null || month == null) {
+            return incomeRepository.getTotalForCategory(auth0UserId, categoryId);
+        } else {
+            return incomeRepository.getTotalForCategoryYearMonth(auth0UserId, categoryId, year, month);
+        }
     }
 
     private IncomeResponseDTO mapToResponseDTO(Income income) {

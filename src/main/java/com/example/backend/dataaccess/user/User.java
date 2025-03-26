@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "client") // Assurez-vous que le nom de la table correspond bien à la base de données
+@Table(name = "client")
 public class User {
 
     @Id
