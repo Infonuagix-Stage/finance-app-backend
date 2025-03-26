@@ -27,6 +27,18 @@ public class ExpenseService {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
     }
+    public List<ExpenseResponseDTO> getMonthlyExpenses(String auth0UserId, int year, int month, UUID categoryId) {
+        List<Expense> expenses;
+
+        if (categoryId != null) {
+            expenses = expenseRepository.findByUserYearMonthAndCategory(auth0UserId, year, month, categoryId);
+        } else {
+            expenses = expenseRepository.findByUserYearAndMonth(auth0UserId, year, month);
+        }
+
+        return expenses.stream().map(this::mapToResponseDTO).collect(Collectors.toList());
+    }
+
     public List<ExpenseResponseDTO> getAllExpenses(String auth0UserId, UUID categoryId) {
         return expenseRepository.findByUser_Auth0UserIdAndCategory_CategoryId(auth0UserId, categoryId)
                 .stream()
@@ -92,8 +104,13 @@ public class ExpenseService {
     }
 
 
-    public BigDecimal getTotalForCategory(String auth0UserId, UUID categoryId) {
-        return expenseRepository.getTotalForCategory(auth0UserId, categoryId);
+    public BigDecimal getTotalForCategory(String auth0UserId, UUID categoryId, Integer year, Integer month) {
+        // si year et month ne sont pas fournis => total global
+        if (year == null || month == null) {
+            return expenseRepository.getTotalForCategory(auth0UserId, categoryId);
+        } else {
+            return expenseRepository.getTotalForCategoryYearMonth(auth0UserId, categoryId, year, month);
+        }
     }
 
     public ExpenseResponseDTO getExpenseByExpenseId(String auth0UserId, UUID categoryId, UUID expenseId) {

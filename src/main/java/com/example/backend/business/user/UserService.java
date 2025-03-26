@@ -23,8 +23,8 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(String auth0UserId) {
-        return userRepository.findById(auth0UserId)
+    public User getUserByAuth0UserId(String auth0UserId) {
+        return userRepository.findByAuth0UserId(auth0UserId)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + auth0UserId));
     }
 
@@ -33,7 +33,7 @@ public class UserService {
     }
 
     public User updateUser(String auth0UserId, User userDetails) {
-        User user = getUserById(auth0UserId);
+        User user = getUserByAuth0UserId(auth0UserId);
         user.setName(userDetails.getName());
         user.setEmail(userDetails.getEmail());
         user.setPassword(userDetails.getPassword());
@@ -41,7 +41,7 @@ public class UserService {
     }
 
     public void deleteUser(String auth0UserId) {
-        User user = getUserById(auth0UserId);
+        User user = getUserByAuth0UserId(auth0UserId);
         userRepository.delete(user);
     }
 

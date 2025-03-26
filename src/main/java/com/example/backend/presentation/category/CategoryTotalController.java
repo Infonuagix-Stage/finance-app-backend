@@ -24,15 +24,18 @@ public class CategoryTotalController {
     public ResponseEntity<BigDecimal> getTotalForCategory(
             @PathVariable String auth0UserId,
             @PathVariable UUID categoryId,
-            @RequestParam String type) {
-        BigDecimal total;
+            @RequestParam String type,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month
+    ) {
+        BigDecimal total = BigDecimal.ZERO;
+
         if ("INCOME".equalsIgnoreCase(type)) {
-            total = incomeService.getTotalForCategory(auth0UserId, categoryId);
+            total = incomeService.getTotalForCategory(auth0UserId, categoryId, year, month);
         } else if ("EXPENSE".equalsIgnoreCase(type)) {
-            total = expenseService.getTotalForCategory(auth0UserId, categoryId);
-        } else {
-            total = BigDecimal.ZERO;
+            total = expenseService.getTotalForCategory(auth0UserId, categoryId, year, month);
         }
+
         return ResponseEntity.ok(total);
     }
 }
