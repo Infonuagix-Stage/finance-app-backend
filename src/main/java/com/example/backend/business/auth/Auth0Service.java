@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +21,6 @@ public class Auth0Service {
     @Value("${AUTH0_DOMAIN}")
     private String domain;
 
-    // Utilisez les variables M2M pour les appels à la Management API
     @Value("${AUTH0_M2M_CLIENT_ID}")
     private String m2mClientId;
 
@@ -31,21 +30,21 @@ public class Auth0Service {
     @Value("${AUTH0_AUDIENCE}")
     private String audience;
 
-    // Cache temporaire du token management (attention à la gestion de l'expiration)
     private String managementToken;
 
-    public void updateUserCredentials(String auth0UserId, String newEmail, String newPassword) {
+    public void updateUserCredentials(String auth0UserId, String newEmail, String newPassword, String newName) {
         if (managementToken == null) {
             managementToken = fetchManagementToken();
         }
         try {
-            patchUser(auth0UserId, newEmail, newPassword);
+            patchUser(auth0UserId, newEmail, newPassword, newName);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Erreur lors de la mise à jour Auth0 : " + e.getMessage(), e);
         }
     }
 
-    private void patchUser(String auth0UserId, String newEmail, String newPassword) throws IOException, InterruptedException {
+    private void patchUser(String auth0UserId, String newEmail, String newPassword, String newName)
+            throws IOException, InterruptedException {
         Map<String, Object> body = new HashMap<>();
         if (newEmail != null && !newEmail.isEmpty()) {
             body.put("email", newEmail);
@@ -53,8 +52,12 @@ public class Auth0Service {
         if (newPassword != null && !newPassword.isEmpty()) {
             body.put("password", newPassword);
         }
+        if (newName != null && !newName.isEmpty()) {
+            // Selon la configuration Auth0, ce champ peut être "name" ou "nickname"
+            body.put("name", newName);
+        }
 
-        // Encoder l'identifiant Auth0 pour qu'il soit compatible avec une URL
+        // Encoder l'identifiant Auth0 pour qu'il soit URL-safe (le caractère | devient %7C, etc.)
         String encodedUserId = URLEncoder.encode(auth0UserId, StandardCharsets.UTF_8);
         String url = "https://" + domain + "/api/v2/users/" + encodedUserId;
 
@@ -75,7 +78,6 @@ public class Auth0Service {
             throw new IOException("Erreur " + response.statusCode() + " : " + response.body());
         }
     }
-
 
     private String fetchManagementToken() {
         try {

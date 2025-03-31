@@ -37,14 +37,15 @@ public class AuthController {
 
     @PutMapping("/update")
     public ResponseEntity<Map<String, Object>> updateUser(@RequestBody UpdateUserDTO updateRequest) {
-        // Appel à Auth0 pour mettre à jour email et/ou mot de passe
+        // Appel à Auth0 pour mettre à jour email, mot de passe et nom
         auth0Service.updateUserCredentials(
                 updateRequest.getAuth0UserId(),
                 updateRequest.getEmail(),
-                updateRequest.getPassword()
+                updateRequest.getPassword(),
+                updateRequest.getName()
         );
 
-        // On retourne un message et éventuellement les nouvelles infos
+        // Retour d'une réponse
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Mise à jour réussie");
         response.put("email", updateRequest.getEmail());
