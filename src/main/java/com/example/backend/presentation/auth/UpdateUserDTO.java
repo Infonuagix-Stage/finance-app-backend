@@ -4,7 +4,7 @@ public class UpdateUserDTO {
     private String auth0UserId;
     private String email;
     private String name;
-    private String password; // Nouveau champ pour le mot de passe
+    private String password;  // nouveau champ pour le mot de passe
 
     public UpdateUserDTO() {}
 

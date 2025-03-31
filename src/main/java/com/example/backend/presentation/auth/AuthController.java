@@ -2,11 +2,9 @@ package com.example.backend.presentation.auth;
 
 import com.example.backend.business.auth.Auth0Service;
 import com.example.backend.dataaccess.user.User;
-import com.example.backend.business.auth.AuthService;
 import com.example.backend.dataaccess.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -39,14 +37,14 @@ public class AuthController {
 
     @PutMapping("/update")
     public ResponseEntity<Map<String, Object>> updateUser(@RequestBody UpdateUserDTO updateRequest) {
-        // Appel direct à Auth0 pour mettre à jour les infos
+        // Appel à Auth0 pour mettre à jour email et/ou mot de passe
         auth0Service.updateUserCredentials(
                 updateRequest.getAuth0UserId(),
                 updateRequest.getEmail(),
                 updateRequest.getPassword()
         );
 
-        // Tu peux retourner un message ou les nouvelles infos si nécessaire
+        // On retourne un message et éventuellement les nouvelles infos
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Mise à jour réussie");
         response.put("email", updateRequest.getEmail());
@@ -54,4 +52,3 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 }
-
