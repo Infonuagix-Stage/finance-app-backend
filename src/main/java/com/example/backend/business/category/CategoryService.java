@@ -82,14 +82,14 @@ public class CategoryService {
         return convertToDTO(savedCategory);
     }
 
-
-
-
-    // Méthode pour mettre à jour une catégorie pour un utilisateur
     public CategoryResponseDTO updateCategoryForUser(UUID userId, UUID categoryId, Category categoryDetails) {
         Category category = getCategoryByIdForUserEntity(userId, categoryId);
-        category.setName(categoryDetails.getName());
-        category.setDescription(categoryDetails.getDescription());
+        if (categoryDetails.getName() != null && !categoryDetails.getName().isEmpty()) {
+            category.setName(categoryDetails.getName());
+        }
+        if (categoryDetails.getDescription() != null && !categoryDetails.getDescription().isEmpty()) {
+            category.setDescription(categoryDetails.getDescription());
+        }
         if (categoryDetails.getType() != null) {
             category.setType(categoryDetails.getType());
         }
@@ -102,13 +102,6 @@ public class CategoryService {
         Category category = getCategoryByIdForUserEntity(userId, categoryId);
         categoryRepository.delete(category);
     }
-
-//    // Récupère une catégorie par son nom pour un utilisateur
-//    public CategoryResponseDTO getCategoryByName(UUID userId, String categoryName) {
-//        Category category = (Category) categoryRepository.findByUserIdAndName(userId, categoryName)
-//                .orElseThrow(() -> new RuntimeException("Category not found with name " + categoryName));
-//        return convertToDTO(category);
-//    }
 
     // Récupère toutes les catégories d'un utilisateur en passant par l'entité User
     public List<CategoryResponseDTO> getAllCategories(UUID userId) {

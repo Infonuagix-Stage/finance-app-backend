@@ -24,14 +24,12 @@ public class CategoryController {
         this.userRepository = userRepository;
     }
 
-    // GET : Récupérer toutes les catégories pour un utilisateur
     @GetMapping
     public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(@PathVariable("userId") UUID userId) {
         List<CategoryResponseDTO> categories = categoryService.getAllCategories(userId);
         return ResponseEntity.ok(categories);
     }
 
-    // GET : Récupérer les catégories expense
     @GetMapping("/expense")
     public ResponseEntity<List<CategoryResponseDTO>> getExpensesCategories(
             @PathVariable("userId") UUID userId) {
@@ -39,7 +37,6 @@ public class CategoryController {
         return ResponseEntity.ok(expenses);
     }
 
-    // GET : Récupérer les catégories expense
     @GetMapping("/income")
     public ResponseEntity<List<CategoryResponseDTO>> getIncomesCategories(
             @PathVariable("userId") UUID userId){
@@ -47,8 +44,6 @@ public class CategoryController {
         return ResponseEntity.ok(incomes);
     }
 
-
-    // GET : Récupérer une catégorie par ID pour un utilisateur
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable UUID userId, @PathVariable UUID id) {
         CategoryResponseDTO category = categoryService.getCategoryByIdForUser(userId, id);
@@ -60,11 +55,9 @@ public class CategoryController {
             @PathVariable UUID userId,
             @RequestBody CategoryRequestDTO requestDTO) {
 
-        // Vérifier l'existence de l'utilisateur
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-        // Convertir le DTO en entité et sauvegarder
         Category category = categoryService.convertToEntity(requestDTO, user);
         Category savedCategory = categoryService.saveCategory(category);
 
@@ -88,32 +81,27 @@ public class CategoryController {
         CategoryResponseDTO createdCategory = categoryService.createIncomeCategory(userId, requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
     }
-
-    // PUT : Mise à jour d'une catégorie par ID pour un utilisateur
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> updateCategory(
             @PathVariable UUID userId,
             @PathVariable UUID id,
-            @RequestBody Category categoryDetails
-    ) {
-        CategoryResponseDTO updatedCategory = categoryService.updateCategoryForUser(userId, id, categoryDetails);
-        return ResponseEntity.ok(updatedCategory);
+            @RequestBody Category categoryDetails) {
+        try {
+            CategoryResponseDTO updatedCategory = categoryService.updateCategoryForUser(userId, id, categoryDetails);
+            return ResponseEntity.ok(updatedCategory);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
-    // DELETE : Suppression d'une catégorie par ID pour un utilisateur
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable UUID userId, @PathVariable UUID id) {
-        categoryService.deleteCategoryForUser(userId, id);
-        return ResponseEntity.noContent().build();
+        try {
+            categoryService.deleteCategoryForUser(userId, id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
-
-//    // (Optionnel) GET : Récupérer une catégorie par nom
-//    @GetMapping("/name/{categoryName}")
-//    public ResponseEntity<CategoryResponseDTO> getCategoryByName(
-//            @PathVariable("userId") UUID userId,
-//            @PathVariable("categoryName") String categoryName) {
-//        CategoryResponseDTO category = categoryService.getCategoryByName(userId, categoryName);
-//        return ResponseEntity.ok(category);
-//    }
 
 }
