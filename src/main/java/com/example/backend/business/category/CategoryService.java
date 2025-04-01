@@ -7,6 +7,7 @@ import com.example.backend.dataaccess.category.CategoryType;
 import com.example.backend.dataaccess.user.User;
 import com.example.backend.dataaccess.category.CategoryRepository;
 import com.example.backend.dataaccess.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,72 +25,63 @@ public class CategoryService {
         this.userRepository = userRepository;
     }
 
-    // Récupère toutes les catégories pour un utilisateur par son ID
-    public List<CategoryResponseDTO> getCategoriesByUser(UUID userId) {
-        List<Category> categories = categoryRepository.findByUser_UserId(userId);
+    public List<CategoryResponseDTO> getCategoriesByUser(String auth0UserId) {
+        List<Category> categories = categoryRepository.findByUser_Auth0UserId(auth0UserId);
         return categories.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    // Récupère une catégorie par son ID pour un utilisateur
-    public CategoryResponseDTO getCategoryByIdForUser(UUID userId, UUID categoryId) {
-        Category category = categoryRepository.findByCategoryIdAndUser_UserId(categoryId, userId)
-                .orElseThrow(() -> new RuntimeException("Category not found for user with id " + userId));
+    public CategoryResponseDTO getCategoryByIdForUser(String auth0UserId, UUID categoryId) {
+        Category category = categoryRepository.findByCategoryIdAndUser_Auth0UserId(categoryId, auth0UserId)
+                .orElseThrow(() -> new RuntimeException("Category not found for user with id " + auth0UserId));
         return convertToDTO(category);
     }
 
-    // Méthode générique pour créer une catégorie pour un utilisateur
-    public CategoryResponseDTO createCategoryForUser(UUID userId, Category category) {
-        User user = findUserById(userId);
-        // Si le type n'est pas renseigné, on affecte EXPENSE par défaut
+    public CategoryResponseDTO createCategoryForUser(String auth0UserId, Category category) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with Auth0UserId: " + auth0UserId));
+
         if (category.getType() == null) {
             category.setType(CategoryType.EXPENSE);
         }
+
         category.setUser(user);
         Category savedCategory = categoryRepository.save(category);
         return convertToDTO(savedCategory);
     }
 
-    // Crée une catégorie de dépense (EXPENSE) pour un utilisateur
-    public CategoryResponseDTO createExpenseCategory(UUID userId, CategoryRequestDTO requestDTO) {
-        User user = findUserById(userId);
-
-        Category category = new Category();
-        // Génère un identifiant unique pour le champ categoryId
-        category.setCategoryId(UUID.randomUUID());
-        category.setName(requestDTO.getName());
-        category.setDescription(requestDTO.getDescription());
-        category.setType(CategoryType.EXPENSE); // Forcer le type à EXPENSE
-        category.setUser(user);
-
-        Category savedCategory = categoryRepository.save(category);
-        return convertToDTO(savedCategory);
-    }
-
-    // Crée une catégorie de revenu (INCOME) pour un utilisateur
-    public CategoryResponseDTO createIncomeCategory(UUID userId, CategoryRequestDTO requestDTO) {
-        User user = findUserById(userId);
+    public CategoryResponseDTO createExpenseCategory(String auth0UserId, CategoryRequestDTO requestDTO) {
+        User user = findUserById(auth0UserId);
 
         Category category = new Category();
         category.setCategoryId(UUID.randomUUID());
         category.setName(requestDTO.getName());
         category.setDescription(requestDTO.getDescription());
-        category.setType(CategoryType.INCOME); // Forcer le type à INCOME
+        category.setType(CategoryType.EXPENSE);
         category.setUser(user);
 
         Category savedCategory = categoryRepository.save(category);
         return convertToDTO(savedCategory);
     }
 
-    public CategoryResponseDTO updateCategoryForUser(UUID userId, UUID categoryId, Category categoryDetails) {
-        Category category = getCategoryByIdForUserEntity(userId, categoryId);
-        if (categoryDetails.getName() != null && !categoryDetails.getName().isEmpty()) {
-            category.setName(categoryDetails.getName());
-        }
-        if (categoryDetails.getDescription() != null && !categoryDetails.getDescription().isEmpty()) {
-            category.setDescription(categoryDetails.getDescription());
-        }
+    public CategoryResponseDTO createIncomeCategory(String auth0UserId, CategoryRequestDTO requestDTO) {
+        User user = findUserById(auth0UserId);
+
+        Category category = new Category();
+        category.setCategoryId(UUID.randomUUID());
+        category.setName(requestDTO.getName());
+        category.setDescription(requestDTO.getDescription());
+        category.setType(CategoryType.INCOME);
+        category.setUser(user);
+
+        Category savedCategory = categoryRepository.save(category);
+        return convertToDTO(savedCategory);
+    }
+    public CategoryResponseDTO updateCategoryForUser(String auth0UserId, UUID categoryId, Category categoryDetails) {
+        Category category = getCategoryByIdForUserEntity(auth0UserId, categoryId);
+        category.setName(categoryDetails.getName());
+        category.setDescription(categoryDetails.getDescription());
         if (categoryDetails.getType() != null) {
             category.setType(categoryDetails.getType());
         }
@@ -97,69 +89,62 @@ public class CategoryService {
         return convertToDTO(updatedCategory);
     }
 
-    // Supprime une catégorie pour un utilisateur
-    public void deleteCategoryForUser(UUID userId, UUID categoryId) {
-        Category category = getCategoryByIdForUserEntity(userId, categoryId);
+    public void deleteCategoryForUser(String auth0UserId, UUID categoryId) {
+        Category category = getCategoryByIdForUserEntity(auth0UserId, categoryId);
         categoryRepository.delete(category);
     }
 
-    // Récupère toutes les catégories d'un utilisateur en passant par l'entité User
-    public List<CategoryResponseDTO> getAllCategories(UUID userId) {
-        User user = findUserById(userId);
-        List<Category> categories = categoryRepository.findByUser_UserId(userId);
+    public List<CategoryResponseDTO> getAllCategories(String auth0UserId) {
+        User user = findUserById(auth0UserId);
+        List<Category> categories = categoryRepository.findByUser_Auth0UserId(auth0UserId);
         return categories.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    // Méthode utilitaire pour récupérer un utilisateur par son ID
-    public User findUserById(UUID userId) {
-        return userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+    public User findUserById(String auth0UserId) {
+        return userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + auth0UserId));
     }
 
-
-    // Méthode demandée pour sauvegarder une catégorie
     public Category saveCategory(Category category) {
         return categoryRepository.save(category);
     }
 
-    // Méthode privée de conversion de l'entité Category en CategoryResponseDTO
     public CategoryResponseDTO convertToDTO(Category category) {
         return new CategoryResponseDTO(
                 category.getCategoryId(),
                 category.getName(),
                 category.getDescription(),
                 category.getCreationDate().toString(),
-                category.getType().name(),  // Conversion de l'enum en chaîne
-                category.getUser() != null ? category.getUser().getUserId() : null
+                category.getType().name(),
+                category.getUser().getAuth0UserId()
         );
     }
 
-    // Méthode privée utilitaire pour récupérer une entité Category pour usage interne
-    private Category getCategoryByIdForUserEntity(UUID userId, UUID categoryId) {
-        return categoryRepository.findByCategoryIdAndUser_UserId(categoryId, userId)
-                .orElseThrow(() -> new RuntimeException("Category not found for user with id " + userId));
+    private Category getCategoryByIdForUserEntity(String auth0UserId, UUID categoryId) {
+        return categoryRepository.findByCategoryIdAndUser_Auth0UserId(categoryId, auth0UserId)
+                .orElseThrow(() -> new RuntimeException("Category not found for user with id " + auth0UserId));
     }
 
-    public List<CategoryResponseDTO> getIncomeCategories(UUID userId) {
-        List<Category> categories = categoryRepository.findByUser_UserIdAndType(userId, CategoryType.INCOME);
+    public List<CategoryResponseDTO> getIncomeCategories(String auth0UserId) {
+        List<Category> categories = categoryRepository.findByUser_Auth0UserIdAndType(auth0UserId, CategoryType.INCOME);
         return categories.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public List<CategoryResponseDTO> getExpenseCategories(UUID userId) {
-        List<Category> categories = categoryRepository.findByUser_UserIdAndType(userId, CategoryType.EXPENSE);
+    public List<CategoryResponseDTO> getExpenseCategories(String auth0UserId) {
+        List<Category> categories = categoryRepository.findByUser_Auth0UserIdAndType(auth0UserId, CategoryType.EXPENSE);
         return categories.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
     public Category convertToEntity(CategoryRequestDTO dto, User user) {
         Category category = new Category();
-        category.setCategoryId(UUID.randomUUID());  // Génère un UUID unique
+        category.setCategoryId(UUID.randomUUID());
         category.setName(dto.getName());
         category.setDescription(dto.getDescription());
-        category.setType(CategoryType.valueOf(dto.getType().toUpperCase()));  // Convertir la String en Enum
-        category.setUser(user);  // Associe l'utilisateur
+        category.setType(CategoryType.valueOf(dto.getType().toUpperCase()));
+        category.setUser(user);
         return category;
     }
 

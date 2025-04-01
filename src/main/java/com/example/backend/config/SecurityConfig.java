@@ -1,21 +1,21 @@
 package com.example.backend.config;
 
-
-import com.example.backend.security.JwtAuthenticationFilter;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -24,23 +24,9 @@ public class SecurityConfig {
     private String frontendUrl;
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        if (frontendUrl == null) {
-            Dotenv dotenv = Dotenv.configure().load();
-            frontendUrl = dotenv.get("FRONTEND_URL");
-        }
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(frontendUrl));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Appliquer cette configuration à tous les endpoints
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+    public JwtDecoder jwtDecoder(@Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") String jwkSetUri) {
+        return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
     }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,26 +34,41 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/*/budget/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/*/budget/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/*/categories/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/*/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/users/*/projects/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users/*/projects/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/*/projects/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/projects/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/*/debts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/*/debts/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/debts/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/*/debts/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/categories/*/expenses/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/*/categories/*/expenses/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/categories/*/incomes/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/users/*/categories/*/incomes/**").permitAll()
-
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                );
 
         return http.build();
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(new Auth0RoleConverter()); // Extract roles from JWT
+        return converter;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of(frontendUrl));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

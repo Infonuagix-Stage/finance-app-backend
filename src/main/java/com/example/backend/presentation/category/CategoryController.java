@@ -1,10 +1,11 @@
 package com.example.backend.presentation.category;
 
+import com.example.backend.business.category.CategoryService;
 import com.example.backend.dataaccess.category.Category;
 import com.example.backend.dataaccess.category.CategoryType;
 import com.example.backend.dataaccess.user.User;
-import com.example.backend.business.category.CategoryService;
 import com.example.backend.dataaccess.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,95 +14,135 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/users/{userId}/categories")
+@RequestMapping("/api/v1/users/{auth0UserId:.+}/categories")
 public class CategoryController {
 
-    private final CategoryService categoryService;
-    private final UserRepository userRepository;
+    @Autowired
+    private CategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService, UserRepository userRepository) {
-        this.categoryService = categoryService;
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(@PathVariable("userId") UUID userId) {
-        List<CategoryResponseDTO> categories = categoryService.getAllCategories(userId);
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(
+            @PathVariable String auth0UserId
+    ) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
+
+        List<CategoryResponseDTO> categories = categoryService.getAllCategories(user.getAuth0UserId());
         return ResponseEntity.ok(categories);
     }
-
     @GetMapping("/expense")
-    public ResponseEntity<List<CategoryResponseDTO>> getExpensesCategories(
-            @PathVariable("userId") UUID userId) {
-        List<CategoryResponseDTO> expenses = categoryService.getExpenseCategories(userId);
+    public ResponseEntity<List<CategoryResponseDTO>> getExpenseCategories(
+            @PathVariable String auth0UserId
+    ) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
+
+        List<CategoryResponseDTO> expenses = categoryService.getExpenseCategories(user.getAuth0UserId());
         return ResponseEntity.ok(expenses);
     }
-
     @GetMapping("/income")
-    public ResponseEntity<List<CategoryResponseDTO>> getIncomesCategories(
-            @PathVariable("userId") UUID userId){
-        List<CategoryResponseDTO> incomes = categoryService.getIncomeCategories(userId);
+    public ResponseEntity<List<CategoryResponseDTO>> getIncomeCategories(
+            @PathVariable String auth0UserId
+    ) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
+
+        List<CategoryResponseDTO> incomes = categoryService.getIncomeCategories(user.getAuth0UserId());
         return ResponseEntity.ok(incomes);
     }
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponseDTO> getCategoryById(
+            @PathVariable String auth0UserId,
+            @PathVariable("categoryId") String categoryId
+    ) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponseDTO> getCategoryById(@PathVariable UUID userId, @PathVariable UUID id) {
-        CategoryResponseDTO category = categoryService.getCategoryByIdForUser(userId, id);
-        return ResponseEntity.ok(category);
+        UUID catId = UUID.fromString(categoryId);
+
+        CategoryResponseDTO categoryDTO = categoryService.getCategoryByIdForUser(user.getAuth0UserId(), catId);
+        return ResponseEntity.ok(categoryDTO);
     }
 
     @PostMapping
     public ResponseEntity<CategoryResponseDTO> createCategory(
-            @PathVariable UUID userId,
-            @RequestBody CategoryRequestDTO requestDTO) {
-
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+            @PathVariable String auth0UserId,
+            @RequestBody CategoryRequestDTO requestDTO
+    ) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
         Category category = categoryService.convertToEntity(requestDTO, user);
         Category savedCategory = categoryService.saveCategory(category);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.convertToDTO(savedCategory));
+        CategoryResponseDTO responseDTO = categoryService.convertToDTO(savedCategory);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @PostMapping("/expense")
     public ResponseEntity<CategoryResponseDTO> createExpenseCategory(
-            @PathVariable UUID userId,
-            @RequestBody CategoryRequestDTO requestDTO) {
+            @PathVariable String auth0UserId,
+            @RequestBody CategoryRequestDTO requestDTO
+    ) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        CategoryResponseDTO createdCategory = categoryService.createExpenseCategory(userId, requestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
+        // Forcer le type à EXPENSE
+        requestDTO.setType(CategoryType.EXPENSE.name());
+
+        Category category = categoryService.convertToEntity(requestDTO, user);
+        Category savedCategory = categoryService.saveCategory(category);
+
+        CategoryResponseDTO responseDTO = categoryService.convertToDTO(savedCategory);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @PostMapping("/income")
     public ResponseEntity<CategoryResponseDTO> createIncomeCategory(
-            @PathVariable UUID userId,
-            @RequestBody CategoryRequestDTO requestDTO) {
+            @PathVariable String auth0UserId,
+            @RequestBody CategoryRequestDTO requestDTO
+    ) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
-        CategoryResponseDTO createdCategory = categoryService.createIncomeCategory(userId, requestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
+        requestDTO.setType(CategoryType.INCOME.name());
+
+        Category category = categoryService.convertToEntity(requestDTO, user);
+        Category savedCategory = categoryService.saveCategory(category);
+
+        CategoryResponseDTO responseDTO = categoryService.convertToDTO(savedCategory);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
-    @PutMapping("/{id}")
+
+    @PutMapping("/{categoryId}")
     public ResponseEntity<CategoryResponseDTO> updateCategory(
-            @PathVariable UUID userId,
-            @PathVariable UUID id,
-            @RequestBody Category categoryDetails) {
-        try {
-            CategoryResponseDTO updatedCategory = categoryService.updateCategoryForUser(userId, id, categoryDetails);
-            return ResponseEntity.ok(updatedCategory);
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+            @PathVariable String auth0UserId,
+            @PathVariable("categoryId") String categoryId,
+            @RequestBody Category categoryDetails
+    ) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
+
+        UUID catId = UUID.fromString(categoryId);
+
+        CategoryResponseDTO updatedCategory = categoryService.updateCategoryForUser(user.getAuth0UserId(), catId, categoryDetails);
+        return ResponseEntity.ok(updatedCategory);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable UUID userId, @PathVariable UUID id) {
-        try {
-            categoryService.deleteCategoryForUser(userId, id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
+    @DeleteMapping("/{categoryId}")
+    public ResponseEntity<Void> deleteCategory(
+            @PathVariable String auth0UserId,
+            @PathVariable("categoryId") String categoryId
+    ) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with auth0UserId: " + auth0UserId));
 
+        UUID catId = UUID.fromString(categoryId);
+        categoryService.deleteCategoryForUser(user.getAuth0UserId(), catId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

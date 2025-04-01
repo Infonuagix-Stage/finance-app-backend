@@ -12,11 +12,27 @@ import java.util.*;
 public interface ExpenseRepository extends JpaRepository<Expense, UUID> {
 
 
-    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.userId = :userId AND e.category.categoryId = :categoryId")
-    BigDecimal getTotalForCategory(@Param("userId") UUID userId, @Param("categoryId") UUID categoryId);
+    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e WHERE e.user.auth0UserId = :auth0UserId AND e.category.categoryId = :categoryId")
+    BigDecimal getTotalForCategory(@Param("auth0UserId") String auth0UserId,
+                                   @Param("categoryId") UUID categoryId);
+    List<Expense> findByUser_Auth0UserIdAndCategory_CategoryId(String auth0UserId , UUID categoryId);
 
-    List<Expense> findByUser_UserIdAndCategory_CategoryId(UUID userId, UUID categoryId);
+    Optional<Expense> findByExpenseId(UUID expenseId);
 
+    @Query("SELECT e FROM Expense e WHERE e.user.auth0UserId = :auth0UserId AND YEAR(e.expenseDate)=:year AND MONTH(e.expenseDate)=:month")
+    List<Expense> findByUserYearAndMonth(@Param("auth0UserId") String auth0UserId, @Param("year") int year, @Param("month") int month);
 
+    @Query("SELECT e FROM Expense e WHERE e.user.auth0UserId = :auth0UserId AND e.category.categoryId = :categoryId AND YEAR(e.expenseDate)=:year AND MONTH(e.expenseDate)=:month")
+    List<Expense> findByUserYearMonthAndCategory(@Param("auth0UserId") String auth0UserId, @Param("year") int year, @Param("month") int month, @Param("categoryId") UUID categoryId);
+
+    @Query("SELECT COALESCE(SUM(e.amount), 0) FROM Expense e " +
+            "WHERE e.user.auth0UserId = :auth0UserId " +
+            "  AND e.category.categoryId = :categoryId " +
+            "  AND YEAR(e.expenseDate) = :year " +
+            "  AND MONTH(e.expenseDate) = :month")
+    BigDecimal getTotalForCategoryYearMonth(@Param("auth0UserId") String auth0UserId,
+                                            @Param("categoryId") UUID categoryId,
+                                            @Param("year") int year,
+                                            @Param("month") int month);
 }
 

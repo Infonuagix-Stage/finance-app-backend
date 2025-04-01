@@ -14,22 +14,23 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/users/{userId}/projects")
+@RequestMapping("/api/v1/users/{auth0UserId:.+}/projects")
 public class ProjectController {
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private ProjectService projectService;
 
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
-    }
+    @GetMapping
+    public ResponseEntity<List<Project>> getProjectsByUser(@PathVariable String auth0UserId) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        System.out.println(auth0UserId);
+        List<Project> projects = projectService.getAllProjectsByUser(user.getAuth0UserId());
+        return ResponseEntity.ok(projects);
 
-    @GetMapping()
-    public ResponseEntity<List<Project>> getProjectsByUser(@PathVariable UUID userId) {
-        System.out.println("Controller getProjectsByUser");
-        return ResponseEntity.ok(projectService.getAllProjectsByUserId(userId));
     }
 
     @GetMapping("/{projectId}")
@@ -37,16 +38,15 @@ public class ProjectController {
         Optional<Project> project = projectService.getProjectById(projectId);
         return project.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
     @PostMapping
     public ResponseEntity<ProjectResponseDTO> createProject(
-            @PathVariable UUID userId,
+            @PathVariable String auth0UserId,
             @RequestBody ProjectRequestDTO projectRequestDTO) {
 
-        // 1. Récupérer l'utilisateur via son ID
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 2. Créer l'entité Project à partir du DTO
         Project project = new Project();
         project.setName(projectRequestDTO.getName());
         project.setTargetAmount(projectRequestDTO.getTargetAmount());
@@ -54,41 +54,24 @@ public class ProjectController {
         project.setDeadline(projectRequestDTO.getDeadline());
         project.setPriority(projectRequestDTO.getPriority());
         project.setMonthlyContribution(projectRequestDTO.getMonthlyContribution());
-
-        // 3. Assigner l’objet user récupéré
         project.setUser(user);
 
-        // 4. Sauvegarder le nouveau projet
         Project savedProject = projectService.save(project);
-
-        // 5. Convertir l’entité sauvegardée en DTO
         ProjectResponseDTO responseDTO = convertToResponseDTO(savedProject);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-
-    // Example conversion method
-    private ProjectResponseDTO convertToResponseDTO(Project project) {
-        ProjectResponseDTO dto = new ProjectResponseDTO();
-        dto.setProjectId(project.getProjectId());
-        dto.setName(project.getName());
-        dto.setTargetAmount(project.getTargetAmount());
-        dto.setSavedAmount(project.getSavedAmount());
-        dto.setDeadline(project.getDeadline());
-        dto.setPriority(project.getPriority());
-        dto.setMonthlyContribution(project.getMonthlyContribution());
-        dto.setUserId(project.getUser().getUserId());
-        dto.setCreatedAt(project.getCreatedAt());
-        return dto;
-    }
     @PutMapping("/{projectId}")
     public ResponseEntity<ProjectResponseDTO> updateProject(
-            @PathVariable UUID userId,
+            @PathVariable String auth0UserId,
             @PathVariable UUID projectId,
             @RequestBody ProjectRequestDTO projectRequestDTO) {
 
-        Optional<Project> projectOptional = projectService.findByIdAndUserId(projectId, userId);
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Optional<Project> projectOptional = projectService.findByIdAndUserId(projectId, user.getAuth0UserId());
         if (projectOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -102,14 +85,34 @@ public class ProjectController {
         project.setMonthlyContribution(projectRequestDTO.getMonthlyContribution());
 
         Project updatedProject = projectService.save(project);
-
-        ProjectResponseDTO responseDTO = projectService.convertToResponseDTO(updatedProject);
+        ProjectResponseDTO responseDTO = convertToResponseDTO(updatedProject);
         return ResponseEntity.ok(responseDTO);
     }
 
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<Void> deleteProject(@PathVariable UUID projectId) {
-        projectService.deleteProject(projectId);
+    public ResponseEntity<Void> deleteProject(
+            @PathVariable String auth0UserId,
+            @PathVariable UUID projectId) {
+
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        projectService.deleteByIdAndUserId(projectId, user.getAuth0UserId());
+
         return ResponseEntity.noContent().build();
+    }
+
+    private ProjectResponseDTO convertToResponseDTO(Project project) {
+        ProjectResponseDTO dto = new ProjectResponseDTO();
+        dto.setProjectId(project.getProjectId());
+        dto.setName(project.getName());
+        dto.setTargetAmount(project.getTargetAmount());
+        dto.setSavedAmount(project.getSavedAmount());
+        dto.setDeadline(project.getDeadline());
+        dto.setPriority(project.getPriority());
+        dto.setMonthlyContribution(project.getMonthlyContribution());
+        dto.setAuth0UserId(project.getUser().getAuth0UserId());
+        dto.setCreatedAt(project.getCreatedAt());
+        return dto;
     }
 }

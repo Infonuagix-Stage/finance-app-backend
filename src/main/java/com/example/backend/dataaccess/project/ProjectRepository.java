@@ -1,6 +1,5 @@
 package com.example.backend.dataaccess.project;
 
-import org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -9,9 +8,11 @@ import java.util.UUID;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, UUID> {
-    List<Project> findByUser_UserId(UUID userId);
+    List<Project> findByUser_Auth0UserId(String auth0UserId);
 
-    Optional<Project> findProjectsByProjectId(UUID projectId);
+    Optional<Project> findByProjectId(UUID projectId);
 
-    Optional<Project> findByProjectIdAndUser_UserId(UUID projectId, UUID userId);
+    Optional<Project> findByProjectIdAndUser_Auth0UserId(UUID projectId, String auth0UserId);
+
+    void deleteByProjectId(UUID projectId);
 }

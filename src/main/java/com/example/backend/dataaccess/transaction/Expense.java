@@ -18,7 +18,7 @@ public class Expense {
     private Long id;
 
     @Column(nullable = false, unique = true, updatable = false)
-    private UUID expenseId;  // Identifiant UUID unique
+    private UUID expenseId;
 
     private BigDecimal amount;
 
@@ -39,6 +39,7 @@ public class Expense {
     @Column(name = "creation_date", updatable = false)
     @CreationTimestamp
     private LocalDateTime creationDate;
+
 
     @PrePersist
     public void prePersist() {

@@ -27,26 +27,36 @@ public class ExpenseService {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
     }
+    public List<ExpenseResponseDTO> getMonthlyExpenses(String auth0UserId, int year, int month, UUID categoryId) {
+        List<Expense> expenses;
 
-    // Nouvelle méthode pour récupérer les dépenses d'un utilisateur dans une catégorie donnée
-    public List<ExpenseResponseDTO> getAllExpenses(UUID userId, UUID categoryId) {
-        return expenseRepository.findByUser_UserIdAndCategory_CategoryId(userId, categoryId)
+        if (categoryId != null) {
+            expenses = expenseRepository.findByUserYearMonthAndCategory(auth0UserId, year, month, categoryId);
+        } else {
+            expenses = expenseRepository.findByUserYearAndMonth(auth0UserId, year, month);
+        }
+
+        return expenses.stream().map(this::mapToResponseDTO).collect(Collectors.toList());
+    }
+
+    public List<ExpenseResponseDTO> getAllExpenses(String auth0UserId, UUID categoryId) {
+        return expenseRepository.findByUser_Auth0UserIdAndCategory_CategoryId(auth0UserId, categoryId)
                 .stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    public ExpenseResponseDTO getExpenseById(UUID id) {
-        Expense expense = expenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expense not found with id " + id));
+    public ExpenseResponseDTO getExpenseById(UUID expenseId) {
+        Expense expense = expenseRepository.findByExpenseId(expenseId)
+                .orElseThrow(() -> new RuntimeException("Expense not found with id " + expenseId));
         return mapToResponseDTO(expense);
     }
 
-    public ExpenseResponseDTO createExpense(ExpenseRequestDTO expenseRequestDTO) {
-        User user = userRepository.findByUserId(expenseRequestDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + expenseRequestDTO.getUserId()));
+    public ExpenseResponseDTO createExpense(String auth0UserId, UUID categoryId , ExpenseRequestDTO expenseRequestDTO) {
+        User user = userRepository.findByAuth0UserId(auth0UserId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + expenseRequestDTO.getAuth0UserId()));
 
-        Category category = categoryRepository.findByCategoryId(expenseRequestDTO.getCategoryId())
+        Category category = categoryRepository.findByCategoryId(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + expenseRequestDTO.getCategoryId()));
 
         Expense expense = new Expense();
@@ -59,13 +69,9 @@ public class ExpenseService {
         Expense savedExpense = expenseRepository.save(expense);
         return mapToResponseDTO(savedExpense);
     }
-
-    public ExpenseResponseDTO updateExpense(UUID id, ExpenseRequestDTO expenseRequestDTO) {
-        System.out.println("ID reçu dans le service : " + id);
-        Expense expense = expenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expense not found with id " + id));
-
-        System.out.println(expenseRequestDTO.getCategoryId());
+    public ExpenseResponseDTO updateExpense(String auth0UserId, UUID categoryId, UUID expenseId, ExpenseRequestDTO expenseRequestDTO) {
+        Expense expense = expenseRepository.findByExpenseId(expenseId)
+                .orElseThrow(() -> new RuntimeException("Expense not found for expenseId: " + expenseId));
 
         Category category = categoryRepository.findByCategoryId(expenseRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + expenseRequestDTO.getCategoryId()));
@@ -79,16 +85,16 @@ public class ExpenseService {
         return mapToResponseDTO(updatedExpense);
     }
 
-    public void deleteExpense(UUID id) {
-        Expense expense = expenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expense not found with id " + id));
+    public void deleteExpense(UUID expenseId) {
+        Expense expense = expenseRepository.findByExpenseId(expenseId)
+                .orElseThrow(() -> new RuntimeException("Expense not found with id " + expenseId));
         expenseRepository.delete(expense);
     }
 
     private ExpenseResponseDTO mapToResponseDTO(Expense expense) {
         ExpenseResponseDTO responseDTO = new ExpenseResponseDTO();
         responseDTO.setExpenseId(expense.getExpenseId());
-        responseDTO.setMontant(expense.getAmount());
+        responseDTO.setAmount(expense.getAmount());
         responseDTO.setExpenseDate(expense.getExpenseDate());
         responseDTO.setDescription(expense.getDescription());
         responseDTO.setCategoryName(expense.getCategory().getName());
@@ -98,9 +104,18 @@ public class ExpenseService {
     }
 
 
-    public BigDecimal getTotalForCategory(UUID userId, UUID categoryId) {
-        return expenseRepository.getTotalForCategory(userId, categoryId);
+    public BigDecimal getTotalForCategory(String auth0UserId, UUID categoryId, Integer year, Integer month) {
+        // si year et month ne sont pas fournis => total global
+        if (year == null || month == null) {
+            return expenseRepository.getTotalForCategory(auth0UserId, categoryId);
+        } else {
+            return expenseRepository.getTotalForCategoryYearMonth(auth0UserId, categoryId, year, month);
+        }
     }
 
-
+    public ExpenseResponseDTO getExpenseByExpenseId(String auth0UserId, UUID categoryId, UUID expenseId) {
+        Expense expense = expenseRepository.findByExpenseId(expenseId)
+                .orElseThrow(() -> new RuntimeException("Expense not found for expenseId: " + expenseId));
+        return new ExpenseResponseDTO();
+    }
 }

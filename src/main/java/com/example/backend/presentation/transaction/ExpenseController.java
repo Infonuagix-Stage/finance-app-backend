@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/users/{userId}/categories/{categoryId}/expenses")
+@RequestMapping("/api/v1/users/{auth0UserId:.+}/categories/{categoryId}/expenses")
 public class ExpenseController {
 
     private final ExpenseService expenseService;
@@ -18,39 +18,55 @@ public class ExpenseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses(
-            @PathVariable("userId") UUID userId,
-            @PathVariable("categoryId") UUID categoryId) {
-        List<ExpenseResponseDTO> expenses = expenseService.getAllExpenses(userId, categoryId);
+    public ResponseEntity<List<ExpenseResponseDTO>> getExpenses(
+            @PathVariable("auth0UserId") String auth0UserId,
+            @PathVariable("categoryId") UUID categoryId,
+            @RequestParam("year") int year,
+            @RequestParam("month") int month
+    ) {
+        List<ExpenseResponseDTO> expenses = expenseService.getMonthlyExpenses(auth0UserId, year, month, categoryId);
         return ResponseEntity.ok(expenses);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ExpenseResponseDTO> getExpenseById(@PathVariable UUID id) {
-        ExpenseResponseDTO expense = expenseService.getExpenseById(id);
+//    @GetMapping
+//    public ResponseEntity<List<ExpenseResponseDTO>> getAllExpenses(
+//            @PathVariable("auth0UserId") String auth0UserId,
+//            @PathVariable("categoryId") UUID categoryId) {
+//        List<ExpenseResponseDTO> expenses = expenseService.getAllExpenses(auth0UserId, categoryId);
+//        return ResponseEntity.ok(expenses);
+//    }
+
+    @GetMapping("/{expenseId}")
+    public ResponseEntity<ExpenseResponseDTO> getExpenseById(@PathVariable UUID expenseId) {
+        ExpenseResponseDTO expense = expenseService.getExpenseById(expenseId);
         return ResponseEntity.ok(expense);
     }
 
     @PostMapping
-    public ResponseEntity<ExpenseResponseDTO> createExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO) {
-        ExpenseResponseDTO createdExpense = expenseService.createExpense(expenseRequestDTO);
+    public ResponseEntity<ExpenseResponseDTO> createExpense(
+            @PathVariable("auth0UserId") String auth0UserId,
+            @PathVariable("categoryId") UUID categoryId,
+            @RequestBody ExpenseRequestDTO expenseRequestDTO
+    ) {
+        ExpenseResponseDTO createdExpense = expenseService.createExpense(auth0UserId, categoryId, expenseRequestDTO);
         return ResponseEntity.ok(createdExpense);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{expenseId}")
     public ResponseEntity<ExpenseResponseDTO> updateExpense(
-            @PathVariable UUID id,
+            @PathVariable("auth0UserId") String auth0UserId,
+            @PathVariable("categoryId") UUID categoryId,
+            @PathVariable("expenseId") String expenseIdStr,
             @RequestBody ExpenseRequestDTO expenseRequestDTO
     ) {
-        System.out.println(expenseRequestDTO.getAmount());
-        System.out.println("ID reçu : " + id);
-        ExpenseResponseDTO updatedExpense = expenseService.updateExpense(id, expenseRequestDTO);
+        UUID expenseId = UUID.fromString(expenseIdStr);
+        ExpenseResponseDTO updatedExpense = expenseService.updateExpense(auth0UserId, categoryId, expenseId, expenseRequestDTO);
         return ResponseEntity.ok(updatedExpense);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteExpense(@PathVariable UUID id) {
-        expenseService.deleteExpense(id);
+    @DeleteMapping("/{expenseId}")
+    public ResponseEntity<Void> deleteExpense(@PathVariable UUID expenseId) {
+        expenseService.deleteExpense(expenseId);
         return ResponseEntity.noContent().build();
     }
 }

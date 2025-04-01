@@ -7,12 +7,15 @@ import java.util.UUID;
 
 public class ExpenseResponseDTO {
     private UUID expenseId;
-    private BigDecimal montant;
+    private BigDecimal amount;
     private LocalDate expenseDate;
     private String description;
-    private String categoryName; // Name of the associated category
-    private String userName;     // Name of the associated user
+    private String categoryName;
+    private String userName;
     private LocalDateTime creationDate;
+
+    public ExpenseResponseDTO() {
+    }
 
     // Getters and Setters
     public UUID getExpenseId() {
@@ -23,12 +26,12 @@ public class ExpenseResponseDTO {
         this.expenseId = expenseId;
     }
 
-    public BigDecimal getMontant() {
-        return montant;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setMontant(BigDecimal montant) {
-        this.montant = montant;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public LocalDate getExpenseDate() {
@@ -71,7 +74,4 @@ public class ExpenseResponseDTO {
         this.creationDate = creationDate;
     }
 
-    public void setUserId(UUID userId) {
-
-    }
 }

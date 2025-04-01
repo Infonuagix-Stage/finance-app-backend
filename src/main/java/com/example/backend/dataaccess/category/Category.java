@@ -27,7 +27,7 @@ public class Category {
     private CategoryType type; // Enum : EXPENSE, INCOME
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userId", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "auth0UserId", nullable = false)
     private User user;
 
     @Column(name = "creation_date", updatable = false)
