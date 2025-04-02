@@ -54,7 +54,8 @@ public class Auth0Service {
         }
         if (newName != null && !newName.isEmpty()) {
             // Selon la configuration Auth0, ce champ peut être "name" ou "nickname"
-            body.put("name", newName);
+            body.put("username", newName);
+            body.put("nickname", newName);
         }
 
         // Encoder l'identifiant Auth0 pour qu'il soit URL-safe (le caractère | devient %7C, etc.)
