@@ -4,6 +4,9 @@ import com.example.backend.dataaccess.category.Category;
 import com.example.backend.dataaccess.user.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,7 +32,8 @@ public class Expense {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name="category_id", foreignKey = @ForeignKey(name="fk_expense_category", value=ConstraintMode.CONSTRAINT))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Category category;
 
     @ManyToOne
