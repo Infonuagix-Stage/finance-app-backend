@@ -43,6 +43,8 @@ public class ProjectService {
     }
 
     public void deleteByIdAndUserId(UUID projectId, String auth0UserId) {
+        Optional<Project> project = projectRepository.findByProjectIdAndUser_Auth0UserId(projectId, auth0UserId);
+        project.ifPresent(projectRepository::delete);
     }
 
     public List<Project> getAllProjectsByUser(String auth0UserId) {
