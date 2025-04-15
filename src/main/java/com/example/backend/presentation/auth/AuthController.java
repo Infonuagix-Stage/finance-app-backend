@@ -6,6 +6,8 @@ import com.example.backend.dataaccess.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,5 +52,18 @@ public class AuthController {
         response.put("email", updateRequest.getEmail());
         response.put("name", updateRequest.getName());
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal Jwt jwt) {
+        String auth0UserId = jwt.getSubject(); // auth0|abc123
+
+        return userRepository.findByAuth0UserId(auth0UserId)
+                .map(user -> {
+                    userRepository.delete(user);              // BD
+                    auth0Service.deleteUser(auth0UserId);     // Auth0
+                    return ResponseEntity.noContent().build();
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }
