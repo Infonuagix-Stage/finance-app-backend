@@ -80,6 +80,33 @@ public class Auth0Service {
         }
     }
 
+    public void deleteUser(String auth0UserId) {
+        if (managementToken == null) {
+            managementToken = fetchManagementToken();
+        }
+
+        try {
+            String encodedUserId = URLEncoder.encode(auth0UserId, StandardCharsets.UTF_8);
+            String url = "https://" + domain + "/api/v2/users/" + encodedUserId;
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header("Authorization", "Bearer " + managementToken)
+                    .DELETE()
+                    .build();
+
+            HttpResponse<String> response = HttpClient.newHttpClient()
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() >= 400) {
+                throw new IOException("Erreur Auth0 " + response.statusCode() + " : " + response.body());
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("Erreur lors de la suppression Auth0 : " + e.getMessage(), e);
+        }
+    }
+
+
     private String fetchManagementToken() {
         try {
             String url = "https://" + domain + "/oauth/token";
